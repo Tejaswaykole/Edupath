@@ -1,5 +1,7 @@
+import { useNavigate } from 'react-router-dom';
 
 export default function LandingPageEdupath() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -24,10 +26,10 @@ export default function LandingPageEdupath() {
 <a className="font-body-md text-body-md text-secondary hover:text-on-surface transition-colors" href="#platform">Platform Engine</a>
 </nav>
 <div className="flex items-center space-x-3">
-<button className="px-4 py-2 font-label-md text-label-md text-on-surface bg-surface-container-lowest hover:bg-surface-container-low rounded-lg transition-colors shadow-sm">
+<button onClick={() => navigate('/learnerloginedupath')} className="px-4 py-2 font-label-md text-label-md text-on-surface bg-surface-container-lowest hover:bg-surface-container-low rounded-lg transition-colors shadow-sm">
           Sign In
         </button>
-<button className="px-5 py-2 font-label-md text-label-md text-on-primary bg-primary-container hover:bg-primary rounded-lg transition-all shadow-sm flex items-center space-x-2">
+<button onClick={() => navigate('/roleselectionedupath')} className="px-5 py-2 font-label-md text-label-md text-on-primary bg-primary-container hover:bg-primary rounded-lg transition-all shadow-sm flex items-center space-x-2">
 <span>Get Started</span>
 <span className="material-symbols-outlined text-sm leading-none">arrow_forward</span>
 </button>

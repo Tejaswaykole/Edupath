@@ -1,5 +1,17 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function RoleSelectionEdupath() {
+  const navigate = useNavigate();
+  const [role, setRole] = useState<'learner'|'mentor'>('learner');
+
+  const handleContinue = () => {
+    if (role === 'mentor') {
+      navigate('/mentorregistrationedupath');
+    } else {
+      navigate('/learnerregistrationedupath');
+    }
+  };
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -35,8 +47,8 @@ export default function RoleSelectionEdupath() {
 <form className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6" id="roleSelectionForm">
 {/*  OPTION 1: LEARNER (DEFAULT SELECTED)  */}
 <label className="relative group cursor-pointer block text-left" htmlFor="role-learner">
-<input defaultChecked className="peer sr-only" id="role-learner" name="user_role" type="radio" value="learner"/>
-<div className="h-full rounded-xl p-6 lg:p-7 flex flex-col justify-between transition-all duration-200 bg-surface-container-lowest shadow-sm peer-defaultChecked:shadow-md peer-defaultChecked:bg-surface-container-lowest peer-defaultChecked:ring-2 peer-defaultChecked:ring-primary-container relative overflow-hidden hover:shadow-md">
+<input checked={role === 'learner'} onChange={() => setRole('learner')} className="peer sr-only" id="role-learner" name="user_role" type="radio" value="learner"/>
+<div className="h-full rounded-xl p-6 lg:p-7 flex flex-col justify-between transition-all duration-200 bg-surface-container-lowest shadow-sm peer-checked:shadow-md peer-checked:bg-surface-container-lowest peer-checked:ring-2 peer-checked:ring-primary-container relative overflow-hidden hover:shadow-md">
 {/*  Top Status & Indicator  */}
 <div>
 <div className="flex items-center justify-between gap-3 mb-5">
@@ -44,8 +56,8 @@ export default function RoleSelectionEdupath() {
                   Primary Path
                 </span>
 {/*  Radio Custom Icon  */}
-<div className="w-6 h-6 rounded-full flex items-center justify-center transition-colors duration-200 peer-defaultChecked:bg-primary-container bg-surface-container text-on-primary">
-<span className="material-symbols-outlined text-[16px] text-white opacity-100 peer-defaultChecked:opacity-100">
+<div className="w-6 h-6 rounded-full flex items-center justify-center transition-colors duration-200 peer-checked:bg-primary-container bg-surface-container text-on-primary">
+<span className="material-symbols-outlined text-[16px] text-white opacity-100 peer-checked:opacity-100">
                     check
                   </span>
 </div>
@@ -102,8 +114,8 @@ export default function RoleSelectionEdupath() {
 </label>
 {/*  OPTION 2: MENTOR (SECONDARY TRACK)  */}
 <label className="relative group cursor-pointer block text-left" htmlFor="role-mentor">
-<input className="peer sr-only" id="role-mentor" name="user_role" type="radio" value="mentor"/>
-<div className="h-full rounded-xl p-6 lg:p-7 flex flex-col justify-between transition-all duration-200 bg-surface-container-lowest shadow-sm peer-defaultChecked:shadow-md peer-defaultChecked:bg-surface-container-lowest peer-defaultChecked:ring-2 peer-defaultChecked:ring-primary-container relative overflow-hidden hover:shadow-md">
+<input checked={role === 'mentor'} onChange={() => setRole('mentor')} className="peer sr-only" id="role-mentor" name="user_role" type="radio" value="mentor"/>
+<div className="h-full rounded-xl p-6 lg:p-7 flex flex-col justify-between transition-all duration-200 bg-surface-container-lowest shadow-sm peer-checked:shadow-md peer-checked:bg-surface-container-lowest peer-checked:ring-2 peer-checked:ring-primary-container relative overflow-hidden hover:shadow-md">
 {/*  Top Status & Indicator  */}
 <div>
 <div className="flex items-center justify-between gap-3 mb-5">
@@ -111,8 +123,8 @@ export default function RoleSelectionEdupath() {
                   Professional Track
                 </span>
 {/*  Radio Custom Icon  */}
-<div className="w-6 h-6 rounded-full flex items-center justify-center transition-colors duration-200 bg-surface-container text-surface peer-defaultChecked:bg-primary-container peer-defaultChecked:text-on-primary">
-<span className="material-symbols-outlined text-[16px] opacity-0 peer-defaultChecked:opacity-100">
+<div className="w-6 h-6 rounded-full flex items-center justify-center transition-colors duration-200 bg-surface-container text-surface peer-checked:bg-primary-container peer-checked:text-on-primary">
+<span className="material-symbols-outlined text-[16px] opacity-0 peer-checked:opacity-100">
                     check
                   </span>
 </div>
@@ -169,8 +181,25 @@ export default function RoleSelectionEdupath() {
 </label>
 </form>
 </main>
+{/* Bottom Actions and Secondary Links */}
+<footer className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center text-center space-y-4 pt-2">
+<button onClick={handleContinue} className="w-full sm:w-80 py-3 px-6 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-headline-sm text-headline-sm transition-all duration-200 shadow-sm flex items-center justify-center gap-2 group" id="submitBtn" type="button">
+<span>Continue</span>
+<span className="material-symbols-outlined text-[18px] transition-transform duration-200 group-hover:translate-x-1">
+          arrow_forward
+        </span>
+</button>
+<p className="font-body-sm text-body-sm text-secondary max-w-sm">
+        You can collaborate or connect mentor credentials at any time in settings.
+      </p>
+<div className="pt-2 flex items-center gap-1.5 font-body-sm text-body-sm">
+<span className="text-secondary">Already have an account?</span>
+<button onClick={() => navigate('/learnerloginedupath')} className="text-primary-container font-semibold hover:underline decoration-primary-container underline-offset-4 focus:outline-none focus:ring-1 focus:ring-primary-container rounded-sm px-1">
+          Sign In
+        </button>
+</div>
+</footer>
     </div>
-</div></main>
 </div>
   );
 }

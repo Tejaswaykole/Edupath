@@ -1,5 +1,16 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
 
 export default function LearnerLoginEdupath() {
+  const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    login({ id: 1, email: 'learner@example.com', role: 'learner', name: 'Alex' }, 'mock-token-123');
+    navigate('/learnerdashboardedupathproduction');
+  };
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -33,7 +44,7 @@ export default function LearnerLoginEdupath() {
 </span>
 </div>
 {/*  Login Form  */}
-<form className="w-full mt-6 space-y-4" id="loginForm" >
+<form onSubmit={handleSubmit} className="w-full mt-6 space-y-4" id="loginForm" >
 {/*  Email Address Field  */}
 <div className="space-y-1.5 text-left w-full">
 <label className="font-label-md text-label-md text-on-surface flex items-center justify-between" htmlFor="emailInput">
@@ -109,14 +120,11 @@ export default function LearnerLoginEdupath() {
 </button>
 </div>
 {/*  Registration Link  */}
-<div className="mt-8 text-center">
-<p className="font-body-sm text-body-sm text-on-surface-variant">
-        Don't have an account? 
-        <a className="font-headline-sm text-headline-sm text-primary hover:underline transition-colors ml-1 inline-flex items-center gap-0.5" href="#">
-<span>Create Account</span>
-<span className="material-symbols-outlined text-label-sm">chevron_right</span>
-</a>
-</p>
+<div className="pt-8 w-full flex items-center justify-center gap-1.5">
+<span className="font-body-md text-body-md text-on-surface-variant">Don't have an account yet?</span>
+<button type="button" onClick={() => navigate('/roleselectionedupath')} className="font-label-md text-label-md text-primary hover:underline decoration-primary underline-offset-4 focus:outline-none rounded-sm px-1">
+          Create Account
+        </button>
 </div>
 {/*  Trust Indicator Footer  */}
 <div className="mt-6 pt-5 w-full flex items-center justify-center gap-2 text-on-surface-variant/80">

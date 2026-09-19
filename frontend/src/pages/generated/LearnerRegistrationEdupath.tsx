@@ -1,5 +1,16 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
 
 export default function LearnerRegistrationEdupath() {
+  const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    login({ id: 2, email: 'newlearner@example.com', role: 'learner', name: 'New Learner' }, 'mock-token-reg');
+    navigate('/learneronboardingedupath');
+  };
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -14,13 +25,13 @@ export default function LearnerRegistrationEdupath() {
 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-low text-primary mb-3">
 <span className="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
 <span className="font-label-sm text-label-sm">Role: Learner</span>
-<button className="text-on-surface-variant hover:text-primary transition-colors ml-1 underline decoration-outline-variant hover:decoration-primary font-label-sm text-label-sm" type="button">Switch</button>
+<button onClick={() => navigate('/roleselectionedupath')} className="text-on-surface-variant hover:text-primary transition-colors ml-1 underline decoration-outline-variant hover:decoration-primary font-label-sm text-label-sm" type="button">Switch</button>
 </div>
 <h1 className="font-headline-lg text-headline-lg text-on-surface mb-1">Create your Learner Account</h1>
 <p className="font-body-sm text-body-sm text-on-surface-variant">Start your personalized skill journey with EduPath.</p>
 </div>
 {/*  Registration Form  */}
-<form className="flex flex-col gap-4" >
+<form onSubmit={handleSubmit} className="flex flex-col gap-4" >
 {/*  Full Name Field  */}
 <div className="flex flex-col gap-1.5">
 <label className="font-label-md text-label-md text-on-surface flex items-center justify-between" htmlFor="fullName">
@@ -111,12 +122,12 @@ export default function LearnerRegistrationEdupath() {
 <span>GitHub</span>
 </button>
 </div>
-{/*  Sign In Bottom Link  */}
-<div className="mt-8 text-center">
-<p className="font-body-sm text-body-sm text-on-surface-variant">
-        Already have an account? 
-        <a className="text-primary font-headline-sm text-headline-sm hover:underline ml-1" href="#">Sign In</a>
-</p>
+{/*  Sign In Link  */}
+<div className="mt-5 text-center">
+<span className="font-body-sm text-body-sm text-on-surface-variant">Already have an account? </span>
+<button type="button" onClick={() => navigate('/learnerloginedupath')} className="font-label-md text-label-md text-primary hover:underline font-semibold ml-1 focus:outline-none">
+        Sign in
+      </button>
 </div>
 </div>
 </div>

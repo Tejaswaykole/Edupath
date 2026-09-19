@@ -1,5 +1,16 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
 
 export default function MentorRegistrationEdupath() {
+  const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    login({ id: 3, email: 'mentor@example.com', role: 'mentor', name: 'New Mentor' }, 'mock-token-mentor');
+    navigate('/mentoroverviewrequestreviewedupath');
+  };
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -23,13 +34,13 @@ export default function MentorRegistrationEdupath() {
 <span>Role: Mentor</span>
 </div>
 <span className="text-outline text-[12px]">•</span>
-<a className="font-label-sm text-label-sm text-primary font-semibold hover:underline" href="#">Switch to Learner</a>
+<button type="button" onClick={() => navigate('/roleselectionedupath')} className="font-label-sm text-label-sm text-primary font-semibold hover:underline">Switch to Learner</button>
 </div>
 <h1 className="font-headline-xl text-headline-xl text-on-surface mb-2 tracking-tight">Create your Mentor Account</h1>
 <p className="font-body-md text-body-md text-on-surface-variant max-w-sm">Guide future engineers and share your domain expertise on EduPath.</p>
 </div>
 {/*  Form Section  */}
-<form className="space-y-4" >
+<form onSubmit={handleSubmit} className="space-y-4" >
 {/*  Full Name  */}
 <div>
 <label className="block font-label-md text-label-md text-on-surface mb-1.5" htmlFor="fullname">Full Name</label>
@@ -131,7 +142,7 @@ export default function MentorRegistrationEdupath() {
 <div className="text-center pt-6 mt-6 bg-surface-container-low/50 rounded-lg p-3">
 <p className="font-body-sm text-body-sm text-on-surface-variant">
         Already registered as a mentor?
-        <a className="text-primary font-semibold hover:underline ml-1" href="#">Sign In</a>
+        <button type="button" onClick={() => navigate('/learnerloginedupath')} className="text-primary font-semibold hover:underline ml-1">Sign In</button>
 </p>
 </div>
 </div>
