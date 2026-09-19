@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .user import User
+    from .skill import LearnerSkill
 
 class LearnerProfile(Base):
     __tablename__ = "learner_profiles"
@@ -17,3 +18,4 @@ class LearnerProfile(Base):
     bio: Mapped[str] = mapped_column(Text, nullable=True)
 
     user: Mapped["User"] = relationship(back_populates="learner_profile")
+    skills: Mapped[list["LearnerSkill"]] = relationship(back_populates="learner")
