@@ -1,0 +1,11 @@
+[
+  "tests/test_auth.py::test_get_me",
+  "tests/test_auth.py::test_get_own_profile_authorized",
+  "tests/test_auth.py::test_login_invalid",
+  "tests/test_auth.py::test_login_success",
+  "tests/test_auth.py::test_mentor_cannot_access_learner_profile",
+  "tests/test_auth.py::test_register_duplicate",
+  "tests/test_auth.py::test_register_learner",
+  "tests/test_learning.py::test_analyze_skill_gaps",
+  "tests/test_learning.py::test_generate_learning_path_fails_without_gaps"
+]

@@ -30,6 +30,21 @@ class SkillGap(Base):
     target_role: Mapped["TargetRole"] = relationship()
     skill: Mapped["Skill"] = relationship()
 
+class LearningObjective(Base):
+    __tablename__ = "learning_objectives"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    skill_gap_id: Mapped[int] = mapped_column(ForeignKey("skill_gaps.id", ondelete="CASCADE"), index=True, nullable=False)
+    
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=True)
+    difficulty: Mapped[str] = mapped_column(String(50), nullable=True)
+    estimated_effort_mins: Mapped[int] = mapped_column(Integer, nullable=True)
+    priority: Mapped[int] = mapped_column(Integer, default=3)
+    status: Mapped[str] = mapped_column(String(50), default="PENDING")
+    
+    skill_gap: Mapped["SkillGap"] = relationship()
+
 class LearningPath(Base):
     __tablename__ = "learning_paths"
 
@@ -74,9 +89,24 @@ class LearningActivity(Base):
     order_index: Mapped[int] = mapped_column(Integer, default=0)
     
     resource_url: Mapped[str] = mapped_column(String(500), nullable=True)
+    weekly_plan_id: Mapped[int] = mapped_column(ForeignKey("weekly_plans.id", ondelete="SET NULL"), nullable=True)
 
     module: Mapped["LearningModule"] = relationship(back_populates="activities")
     progress: Mapped[List["LearningProgress"]] = relationship(back_populates="activity")
+    weekly_plan: Mapped["WeeklyPlan"] = relationship(back_populates="activities")
+
+class WeeklyPlan(Base):
+    __tablename__ = "weekly_plans"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    learning_path_id: Mapped[int] = mapped_column(ForeignKey("learning_paths.id", ondelete="CASCADE"), index=True, nullable=False)
+    
+    week_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    focus_description: Mapped[str] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(String(50), default="ACTIVE")
+    
+    learning_path: Mapped["LearningPath"] = relationship()
+    activities: Mapped[List["LearningActivity"]] = relationship(back_populates="weekly_plan")
 
 class LearningProgress(Base):
     __tablename__ = "learning_progress"

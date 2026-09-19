@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
 
     CORS_ALLOWED_ORIGINS: str = "http://localhost:5173"
+    
+    GROQ_API_KEY: str = "dummy_key_if_not_set"
 
     @property
     def get_cors_origins(self) -> List[str]:
