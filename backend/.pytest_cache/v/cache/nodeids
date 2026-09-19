@@ -7,5 +7,7 @@
   "tests/test_auth.py::test_register_duplicate",
   "tests/test_auth.py::test_register_learner",
   "tests/test_learning.py::test_analyze_skill_gaps",
-  "tests/test_learning.py::test_generate_learning_path_fails_without_gaps"
+  "tests/test_learning.py::test_generate_learning_path_fails_without_gaps",
+  "tests/test_workspace.py::test_practice_submission",
+  "tests/test_workspace.py::test_progress_update"
 ]

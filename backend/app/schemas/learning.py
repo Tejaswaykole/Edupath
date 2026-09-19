@@ -40,6 +40,8 @@ class LearningActivityResponse(BaseModel):
     difficulty: Optional[str] = None
     order_index: int
     resource_url: Optional[str] = None
+    practice_task_id: Optional[int] = None
+    assessment_id: Optional[int] = None
 
     class Config:
         from_attributes = True

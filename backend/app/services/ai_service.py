@@ -1,7 +1,7 @@
 import json
 from groq import Groq
 from app.core.config import settings
-from app.schemas.ai import AISkillGapAnalysis, AILearningPathResult
+from app.schemas.ai import AISkillGapAnalysis, AILearningPathResult, AIPracticeEvaluation
 
 client = Groq(api_key=settings.GROQ_API_KEY)
 
@@ -113,3 +113,41 @@ def generate_learning_path(target_role_title: str, gaps: list[str]) -> AILearnin
     except Exception as e:
         print(f"Groq API Error: {e}")
         return AILearningPathResult(title="Fallback Path", modules=[])
+
+def evaluate_practice_attempt(instructions: str, expected: str, submission: str) -> AIPracticeEvaluation:
+    if settings.GROQ_API_KEY == "dummy_key_if_not_set" or not settings.GROQ_API_KEY:
+        # Fallback simplistic grading
+        score = 85 if len(submission) > 10 else 40
+        return AIPracticeEvaluation(
+            score=score,
+            feedback="This is fallback feedback. Your submission was evaluated based on length."
+        )
+
+    prompt = f"""
+    You are an expert technical evaluator. Evaluate a learner's submission against the instructions and expected outcome.
+    
+    Instructions: {instructions}
+    Expected Outcome: {expected}
+    
+    Learner's Submission:
+    {submission}
+    
+    Return a JSON response matching exactly this structure:
+    {{
+      "score": int, // 0 to 100
+      "feedback": "string explaining what they did right and what to improve"
+    }}
+    """
+    
+    try:
+        response = client.chat.completions.create(
+            model="llama3-8b-8192",
+            messages=[{"role": "user", "content": prompt}],
+            response_format={"type": "json_object"},
+            temperature=0.2,
+        )
+        data = json.loads(response.choices[0].message.content)
+        return AIPracticeEvaluation(**data)
+    except Exception as e:
+        print(f"Groq API Error: {e}")
+        return AIPracticeEvaluation(score=50, feedback="Failed to connect to AI evaluation service.")

@@ -27,3 +27,7 @@ class AIModule(BaseModel):
 class AILearningPathResult(BaseModel):
     title: str = Field(description="Title of the overall learning path")
     modules: List[AIModule] = Field(description="Modules in sequential order")
+
+class AIPracticeEvaluation(BaseModel):
+    score: int = Field(description="Score from 0 to 100 based on correctness")
+    feedback: str = Field(description="Constructive feedback explaining the score and how to improve")

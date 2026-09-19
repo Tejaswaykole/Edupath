@@ -90,6 +90,8 @@ class LearningActivity(Base):
     
     resource_url: Mapped[str] = mapped_column(String(500), nullable=True)
     weekly_plan_id: Mapped[int] = mapped_column(ForeignKey("weekly_plans.id", ondelete="SET NULL"), nullable=True)
+    practice_task_id: Mapped[int] = mapped_column(ForeignKey("practice_tasks.id", ondelete="SET NULL"), nullable=True)
+    assessment_id: Mapped[int] = mapped_column(ForeignKey("assessments.id", ondelete="SET NULL"), nullable=True)
 
     module: Mapped["LearningModule"] = relationship(back_populates="activities")
     progress: Mapped[List["LearningProgress"]] = relationship(back_populates="activity")
