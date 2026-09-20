@@ -34,6 +34,9 @@ export interface ActiveMentorshipResponse {
   mentor_id: number;
   status: string;
   goals?: string;
+  mentor?: MentorProfileResponse;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface MentorGuidanceCreate {
@@ -69,6 +72,11 @@ export const mentorshipApi = {
 
   getActiveMentorships: async (): Promise<ActiveMentorshipResponse[]> => {
     const response = await api.get('/mentorship/active');
+    return response.data;
+  },
+
+  getGuidance: async (mentorshipId: number): Promise<MentorGuidanceResponse[]> => {
+    const response = await api.get(`/mentorship/active/${mentorshipId}/guidance`);
     return response.data;
   },
 

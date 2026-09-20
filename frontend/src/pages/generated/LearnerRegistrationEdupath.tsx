@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
 export default function LearnerRegistrationEdupath() {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
+  
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login({ id: 2, email: 'newlearner@example.com', role: 'learner', name: 'New Learner' }, 'mock-token-reg');
-    navigate('/learneronboardingedupath');
+    login({ id: Date.now(), email: email || 'newlearner@example.com', role: 'learner', name: fullName || 'New Learner' }, 'mock-token-reg');
+    navigate('/learneronboarding');
   };
   return (
     <div className="min-h-screen bg-surface">
@@ -25,7 +28,7 @@ export default function LearnerRegistrationEdupath() {
 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-low text-primary mb-3">
 <span className="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
 <span className="font-label-sm text-label-sm">Role: Learner</span>
-<button onClick={() => navigate('/roleselectionedupath')} className="text-on-surface-variant hover:text-primary transition-colors ml-1 underline decoration-outline-variant hover:decoration-primary font-label-sm text-label-sm" type="button">Switch</button>
+<button onClick={() => navigate('/roleselection')} className="text-on-surface-variant hover:text-primary transition-colors ml-1 underline decoration-outline-variant hover:decoration-primary font-label-sm text-label-sm" type="button">Switch</button>
 </div>
 <h1 className="font-headline-lg text-headline-lg text-on-surface mb-1">Create your Learner Account</h1>
 <p className="font-body-sm text-body-sm text-on-surface-variant">Start your personalized skill journey with EduPath.</p>
@@ -39,7 +42,7 @@ export default function LearnerRegistrationEdupath() {
         </label>
 <div className="relative flex items-center">
 <span className="material-symbols-outlined absolute left-3 text-outline text-[18px] pointer-events-none">person</span>
-<input className="w-full pl-9 pr-3.5 py-2.5 bg-surface-container-lowest rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline outline-none focus:bg-surface-bright shadow-sm transition-all" id="fullName" name="fullName" placeholder="e.g. Tejas Patil" required type="text"/>
+<input value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full pl-9 pr-3.5 py-2.5 bg-surface-container-lowest rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline outline-none focus:bg-surface-bright shadow-sm transition-all" id="fullName" name="fullName" placeholder="e.g. Tejas Patil" required type="text"/>
 </div>
 </div>
 {/*  Email Field  */}
@@ -49,7 +52,7 @@ export default function LearnerRegistrationEdupath() {
         </label>
 <div className="relative flex items-center">
 <span className="material-symbols-outlined absolute left-3 text-outline text-[18px] pointer-events-none">mail</span>
-<input className="w-full pl-9 pr-3.5 py-2.5 bg-surface-container-lowest rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline outline-none focus:bg-surface-bright shadow-sm transition-all" id="email" name="email" placeholder="tejas@example.com" required type="email"/>
+<input value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-9 pr-3.5 py-2.5 bg-surface-container-lowest rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline outline-none focus:bg-surface-bright shadow-sm transition-all" id="email" name="email" placeholder="tejas@example.com" required type="email"/>
 </div>
 </div>
 {/*  Password Field  */}
@@ -125,7 +128,7 @@ export default function LearnerRegistrationEdupath() {
 {/*  Sign In Link  */}
 <div className="mt-5 text-center">
 <span className="font-body-sm text-body-sm text-on-surface-variant">Already have an account? </span>
-<button type="button" onClick={() => navigate('/learnerloginedupath')} className="font-label-md text-label-md text-primary hover:underline font-semibold ml-1 focus:outline-none">
+<button type="button" onClick={() => navigate('/learnerlogin')} className="font-label-md text-label-md text-primary hover:underline font-semibold ml-1 focus:outline-none">
         Sign in
       </button>
 </div>

@@ -1,5 +1,7 @@
+import { useAuthStore } from '../../store/authStore';
 
 export default function MentorOverviewRequestReviewEdupath() {
+  const user = useAuthStore((state) => state.user);
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -11,7 +13,7 @@ export default function MentorOverviewRequestReviewEdupath() {
 <span className="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm uppercase tracking-wider">Staff Mentor Mode</span>
 <span className="text-secondary font-label-sm text-label-sm">• Engineering &amp; Cloud Tracks</span>
 </div>
-<h1 className="font-headline-xl text-headline-xl text-on-surface tracking-tight">Mentor Overview</h1>
+<h1 className="font-headline-xl text-headline-xl text-on-surface tracking-tight">Welcome, {user?.name?.split(' ')[0] || 'Mentor'}</h1>
 <p className="font-body-md text-body-md text-secondary mt-0.5">Manage incoming learner mentorship requests, review code checkpoints, and monitor milestone progression.</p>
 </div>
 <div className="flex items-center gap-3 self-start md:self-auto">
@@ -118,7 +120,7 @@ export default function MentorOverviewRequestReviewEdupath() {
 </div>
 <div>
 <div className="flex items-center gap-2">
-<h3 className="font-headline-sm text-headline-sm text-on-surface">Tejas Patil</h3>
+<h3 className="font-headline-sm text-headline-sm text-on-surface">Alex Learner</h3>
 <span className="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">Level 3 Full Stack</span>
 </div>
 <p className="font-body-sm text-body-sm text-secondary">Requested 42 minutes ago • Checkpoint Intervention</p>
@@ -348,7 +350,7 @@ export default function MentorOverviewRequestReviewEdupath() {
 <div className="flex items-center gap-3">
 <img className="w-9 h-9 rounded-xl object-cover" data-alt="Close up professional portrait of Tejas Patil, clear features, soft focus office in background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB22FgU-WpHkWgAWVDhzKMxS66LzU3tvGSu65fmruycTmSiJeNOmnTviTBuag2KYOzgvUVOTI1y4TNdoABFU6sMQ9s3ffe41AWcFhP4v8Zt5IC28Hi67Us8Q4ha2HErQ-ogj-bkcnDjAWJRskHsIQjafIxm8oEJIjp3k_qsTJSaQ-Ap5vSZpsaUJmsAY1uWyxF20Yi268qy0m4T22z5R_6Ma1rFASWs2ZLr0JjFXNy"/>
 <div>
-<div className="font-label-md text-label-md text-on-surface font-semibold">Tejas Patil</div>
+<div className="font-label-md text-label-md text-on-surface font-semibold">Alex Learner</div>
 <div className="font-body-sm text-body-sm text-secondary">Full Stack Track</div>
 </div>
 </div>

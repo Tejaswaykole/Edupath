@@ -122,7 +122,7 @@ export default function LearnerLoginEdupath() {
 {/*  Registration Link  */}
 <div className="pt-8 w-full flex items-center justify-center gap-1.5">
 <span className="font-body-md text-body-md text-on-surface-variant">Don't have an account yet?</span>
-<button type="button" onClick={() => navigate('/roleselectionedupath')} className="font-label-md text-label-md text-primary hover:underline decoration-primary underline-offset-4 focus:outline-none rounded-sm px-1">
+<button type="button" onClick={() => navigate('/roleselection')} className="font-label-md text-label-md text-primary hover:underline decoration-primary underline-offset-4 focus:outline-none rounded-sm px-1">
           Create Account
         </button>
 </div>

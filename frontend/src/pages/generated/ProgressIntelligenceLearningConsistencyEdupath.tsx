@@ -3,6 +3,10 @@ import { useReports } from '../../hooks/useReports';
 
 export default function ProgressIntelligenceLearningConsistencyEdupath() {
   const { report, isLoading } = useReports();
+  
+  if (isLoading || !report) {
+    return <div className="min-h-screen bg-surface flex items-center justify-center p-8">Loading progress intelligence...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-surface">

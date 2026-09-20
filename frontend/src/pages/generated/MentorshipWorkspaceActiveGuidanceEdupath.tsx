@@ -2,8 +2,10 @@ import React from 'react';
 import { useMentorship } from '../../hooks/useMentorship';
 
 export default function MentorshipWorkspaceActiveGuidanceEdupath() {
-  const { activeMentorships, isLoadingActiveMentorships } = useMentorship();
+  const { activeMentorships, useGuidance } = useMentorship();
   const activeMentorship = activeMentorships && activeMentorships.length > 0 ? activeMentorships[0] : null;
+  const { data: guidanceList } = useGuidance(activeMentorship?.id || 0);
+  const activeGuidance = guidanceList && guidanceList.length > 0 ? guidanceList[0] : null;
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -16,9 +18,9 @@ export default function MentorshipWorkspaceActiveGuidanceEdupath() {
 <span className="material-symbols-outlined text-[14px]">chevron_right</span>
 <a className="hover:text-primary transition-colors" href="#">Mentors</a>
 <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-<span className="text-on-surface font-semibold">Active Mentorship {activeMentorship ? `(${activeMentorship.mentor.professional_title})` : ''}</span>
+<span className="text-on-surface font-semibold">Active Mentorship {activeMentorship?.mentor ? `(${activeMentorship.mentor.professional_title})` : ''}</span>
 </div>
-<h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">Mentorship Workspace {activeMentorship ? `— ${activeMentorship.mentor.professional_title}` : ''}</h1>
+<h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">Mentorship Workspace {activeMentorship?.mentor ? `— ${activeMentorship.mentor.professional_title}` : ''}</h1>
 </div>
 <div className="flex items-center gap-3 self-start md:self-auto">
 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 font-label-sm text-label-sm shadow-sm">
@@ -35,14 +37,14 @@ export default function MentorshipWorkspaceActiveGuidanceEdupath() {
 <div className="w-full bg-surface-container-lowest rounded-2xl p-6 shadow-sm flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6">
 <div className="flex items-center gap-4 min-w-0">
 <div className="relative flex-shrink-0">
-<img className="w-16 h-16 rounded-2xl object-cover shadow-sm" alt="Mentor" src={activeMentorship?.mentor.linkedin_url || "https://lh3.googleusercontent.com/aida-public/AB6AXuCYO9p_ACAIsspjr0MtiD_tsXBHlqZCXEhXuQrWLKM1-qAVnXjghpmqZUhuu84Fur4IW9U-jTLsidYd8V-Sla2unrWoicGwW-BKLvSKxXAgVN66byG_c8ST1_FqBujwGhfYf6_ZOR5RBztlCgLBXejqgaG5499BV0I26Nb0E-X5nAXm4dprMMJGix-lkdFgio81ZWcEggF1o0B9pVVAJP697Fl_21GOakIcgz_4CaUG"}/>
+<img className="w-16 h-16 rounded-2xl object-cover shadow-sm" alt="Mentor" src={activeMentorship?.mentor?.linkedin_url || "https://lh3.googleusercontent.com/aida-public/AB6AXuCYO9p_ACAIsspjr0MtiD_tsXBHlqZCXEhXuQrWLKM1-qAVnXjghpmqZUhuu84Fur4IW9U-jTLsidYd8V-Sla2unrWoicGwW-BKLvSKxXAgVN66byG_c8ST1_FqBujwGhfYf6_ZOR5RBztlCgLBXejqgaG5499BV0I26Nb0E-X5nAXm4dprMMJGix-lkdFgio81ZWcEggF1o0B9pVVAJP697Fl_21GOakIcgz_4CaUG"}/>
 <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-surface-container-lowest flex items-center justify-center">
 <span className="w-3.5 h-3.5 rounded-full bg-emerald-500"></span>
 </div>
 </div>
 <div className="flex flex-col min-w-0">
 <div className="flex items-center gap-2 flex-wrap">
-<span className="font-headline-sm text-headline-sm text-on-surface font-bold">{activeMentorship?.mentor.professional_title || "Rahul Sharma"}</span>
+<span className="font-headline-sm text-headline-sm text-on-surface font-bold">{activeMentorship?.mentor?.professional_title || "Rahul Sharma"}</span>
 <span className="px-2.5 py-0.5 rounded-md bg-surface-container-low text-secondary font-label-sm text-label-sm font-medium">Staff Backend Engineer @ Stripe</span>
 </div>
 <div className="flex items-center gap-2 mt-1">
@@ -91,12 +93,10 @@ export default function MentorshipWorkspaceActiveGuidanceEdupath() {
 </div>
 {/*  Guidance Narrative  */}
 <div className="p-4 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md leading-relaxed">
-{activeMentorship?.guidance && activeMentorship.guidance.length > 0 ? (
-  <p>{activeMentorship.guidance[0].content}</p>
+{activeGuidance ? (
+  <p>{activeGuidance.message}</p>
 ) : (
-  <p>
-    Hi Tejas, great progress on your Express routes. I reviewed your Lab #ND-504 code. The reason you're hitting latency issues is storing full decoded claims in Redis on every hit. Instead, only store the <code className="px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-mono text-[12px]">jti</code> (JWT ID) in a Redis SET with a TTL matching your token expiration window. Check out the token rotation sample I annotated below.
-  </p>
+  <p>No guidance has been provided yet.</p>
 )}
 </div>
 {/*  Annotated Code Snippet Box  */}

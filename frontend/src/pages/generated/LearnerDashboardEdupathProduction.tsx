@@ -1,9 +1,11 @@
 import { useLearningPath } from '../../hooks/useLearning';
 import { useAgentActivity } from '../../hooks/useAgent';
+import { useAuthStore } from '../../store/authStore';
 
 export default function LearnerDashboardEdupathProduction() {
   const { data: learningPath, isLoading: isLearningPathLoading } = useLearningPath();
   const { data: agentActivity, isLoading: isAgentActivityLoading } = useAgentActivity();
+  const user = useAuthStore((state) => state.user);
 
   return (
     <div className="min-h-screen bg-surface">
@@ -15,7 +17,7 @@ export default function LearnerDashboardEdupathProduction() {
 <div className="relative z-10 w-full p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
 <div className="max-w-2xl">
 <div className="flex items-center gap-3 mb-2">
-<span className="font-headline-xl text-headline-xl text-on-surface">Good morning, Tejas</span>
+<span className="font-headline-xl text-headline-xl text-on-surface">Good morning, {user?.name?.split(' ')[0] || 'Learner'}</span>
 <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-surface-container-lowest shadow-sm text-primary font-label-sm text-label-sm">
 <span className="material-symbols-outlined text-[15px]">workspace_premium</span>
             Level 3

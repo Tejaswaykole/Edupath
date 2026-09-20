@@ -1,5 +1,8 @@
 
+import { useNavigate } from 'react-router-dom';
+
 export default function OnboardingCompleteEdupath() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -146,11 +149,11 @@ export default function OnboardingCompleteEdupath() {
 </div>
 {/*  Execution Action Zone  */}
 <div className="w-full mt-8 flex flex-col items-center gap-3.5">
-<button className="w-full bg-primary-container hover:bg-primary text-on-primary font-headline-sm text-headline-sm py-3.5 px-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer" id="continueBtn" type="button">
+<button onClick={() => navigate('/documentcenterresumeupload')} className="w-full bg-primary-container hover:bg-primary text-on-primary font-headline-sm text-headline-sm py-3.5 px-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer" id="continueBtn" type="button">
 <span>Continue to Profile Analysis</span>
 <span className="material-symbols-outlined text-[19px] transition-transform duration-200 group-hover:translate-x-1">arrow_forward</span>
 </button>
-<button className="text-secondary hover:text-on-surface font-body-sm text-body-sm transition-colors duration-150 underline-offset-4 hover:underline py-1" type="button">
+<button onClick={() => navigate('/learneronboarding')} className="text-secondary hover:text-on-surface font-body-sm text-body-sm transition-colors duration-150 underline-offset-4 hover:underline py-1" type="button">
         Review or edit onboarding answers
       </button>
 </div>
@@ -168,3 +171,4 @@ export default function OnboardingCompleteEdupath() {
     </div>
   );
 }
+

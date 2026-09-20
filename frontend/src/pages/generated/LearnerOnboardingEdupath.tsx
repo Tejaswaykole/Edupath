@@ -1,5 +1,57 @@
 
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useLearner } from '../../hooks/useLearner';
+
+const skillCategories = [
+  {
+    name: 'Frontend Development',
+    icon: 'devices',
+    skills: ['JavaScript', 'React', 'TypeScript', 'HTML/CSS', 'Next.js', 'Tailwind CSS']
+  },
+  {
+    name: 'Backend & Databases',
+    icon: 'dns',
+    skills: ['Node.js', 'Python', 'PostgreSQL', 'SQL', 'Go', 'Express']
+  },
+  {
+    name: 'AI & Machine Learning',
+    icon: 'smart_toy',
+    skills: ['PyTorch', 'TensorFlow', 'Scikit-Learn', 'NLP', 'Computer Vision', 'LLMs']
+  },
+  {
+    name: 'Data Science & Analytics',
+    icon: 'query_stats',
+    skills: ['Pandas', 'NumPy', 'Jupyter', 'Tableau', 'PowerBI', 'R']
+  },
+  {
+    name: 'Tools & DevOps',
+    icon: 'terminal',
+    skills: ['Git', 'Docker', 'AWS', 'CI/CD', 'Figma']
+  }
+];
+
 export default function LearnerOnboardingEdupath() {
+  const navigate = useNavigate();
+  const [selectedSkills, setSelectedSkills] = useState<string[]>(['JavaScript', 'React', 'Node.js', 'Git']);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [experienceLevel, setExperienceLevel] = useState('Intermediate (1-3 yrs)');
+  const [targetRole, setTargetRole] = useState('Full Stack Developer');
+  const [otherTargetRole, setOtherTargetRole] = useState('');
+  const [careerGoal, setCareerGoal] = useState('Senior role in 6 mos');
+  const [learningAvailability, setLearningAvailability] = useState('1 hr/day • 5 days/wk');
+  
+  const { updateProfile } = useLearner();
+
+  const toggleSkill = (skill: string) => {
+    setSelectedSkills(prev => 
+      prev.includes(skill) 
+        ? prev.filter(s => s !== skill)
+        : [...prev, skill]
+    );
+  };
+
+  const clearSkills = () => setSelectedSkills([]);
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -90,175 +142,133 @@ export default function LearnerOnboardingEdupath() {
 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
 <span className="material-symbols-outlined text-[20px]">search</span>
 </div>
-<input className="w-full pl-10 pr-4 py-2.5 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all" id="skill-search" placeholder="Search skills (e.g. React, Python, Docker, PostgreSQL)..." type="text"/>
+<input className="w-full pl-10 pr-4 py-2.5 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all" id="skill-search" placeholder="Search skills (e.g. React, Python, Docker, PostgreSQL)..." type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
 </div>
 {/*  Selected Skills Active Row  */}
 <div className="space-y-2">
 <div className="flex items-center justify-between">
 <span className="font-label-sm text-label-sm text-on-surface-variant font-semibold tracking-wide uppercase">
-            Active Baseline Skills (<span id="selected-count">4</span>)
+            Active Baseline Skills (<span id="selected-count">{selectedSkills.length}</span>)
           </span>
-<button className="font-label-sm text-label-sm text-primary hover:underline font-medium" id="clear-skills-btn">Clear all</button>
+<button onClick={clearSkills} className="font-label-sm text-label-sm text-primary hover:underline font-medium" id="clear-skills-btn">Clear all</button>
 </div>
 <div className="flex flex-wrap gap-2 min-h-[38px] p-2.5 rounded-lg bg-surface-container-low/60" id="selected-chips-container">
-{/*  Selected Chip Item  */}
-<div className="skill-selected-tag inline-flex items-center gap-1.5 pl-2.5 pr-2 py-1 bg-surface-container-lowest rounded-md shadow-sm text-on-surface font-label-md text-label-md">
-<span className="material-symbols-outlined text-[16px] text-tertiary-container" >check_circle</span>
-<span>JavaScript</span>
-<button className="remove-chip-btn text-on-surface-variant hover:text-error ml-1 p-0.5 rounded hover:bg-surface-container transition-colors" type="button">
-<span className="material-symbols-outlined text-[14px] block">close</span>
-</button>
-</div>
-<div className="skill-selected-tag inline-flex items-center gap-1.5 pl-2.5 pr-2 py-1 bg-surface-container-lowest rounded-md shadow-sm text-on-surface font-label-md text-label-md">
-<span className="material-symbols-outlined text-[16px] text-tertiary-container" >check_circle</span>
-<span>React</span>
-<button className="remove-chip-btn text-on-surface-variant hover:text-error ml-1 p-0.5 rounded hover:bg-surface-container transition-colors" type="button">
-<span className="material-symbols-outlined text-[14px] block">close</span>
-</button>
-</div>
-<div className="skill-selected-tag inline-flex items-center gap-1.5 pl-2.5 pr-2 py-1 bg-surface-container-lowest rounded-md shadow-sm text-on-surface font-label-md text-label-md">
-<span className="material-symbols-outlined text-[16px] text-tertiary-container" >check_circle</span>
-<span>Node.js</span>
-<button className="remove-chip-btn text-on-surface-variant hover:text-error ml-1 p-0.5 rounded hover:bg-surface-container transition-colors" type="button">
-<span className="material-symbols-outlined text-[14px] block">close</span>
-</button>
-</div>
-<div className="skill-selected-tag inline-flex items-center gap-1.5 pl-2.5 pr-2 py-1 bg-surface-container-lowest rounded-md shadow-sm text-on-surface font-label-md text-label-md">
-<span className="material-symbols-outlined text-[16px] text-tertiary-container" >check_circle</span>
-<span>Git</span>
-<button className="remove-chip-btn text-on-surface-variant hover:text-error ml-1 p-0.5 rounded hover:bg-surface-container transition-colors" type="button">
-<span className="material-symbols-outlined text-[14px] block">close</span>
-</button>
-</div>
+{selectedSkills.map(skill => (
+  <div key={skill} className="skill-selected-tag inline-flex items-center gap-1.5 pl-2.5 pr-2 py-1 bg-surface-container-lowest rounded-md shadow-sm text-on-surface font-label-md text-label-md">
+    <span className="material-symbols-outlined text-[16px] text-tertiary-container">check_circle</span>
+    <span>{skill}</span>
+    <button onClick={() => toggleSkill(skill)} className="remove-chip-btn text-on-surface-variant hover:text-error ml-1 p-0.5 rounded hover:bg-surface-container transition-colors" type="button">
+      <span className="material-symbols-outlined text-[14px] block">close</span>
+    </button>
+  </div>
+))}
 </div>
 </div>
 {/*  Popular Categories Grid  */}
 <div className="space-y-4 pt-1">
-{/*  Frontend  */}
-<div className="space-y-2">
-<div className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[16px] text-primary">devices</span>
-<span className="font-label-sm text-label-sm font-semibold text-on-surface">Frontend Development</span>
-</div>
-<div className="flex flex-wrap gap-2">
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-primary text-on-primary font-medium shadow-sm transition-all" data-skill="JavaScript" type="button">
-              JavaScript ✓
+{skillCategories.map(category => {
+  const filteredSkills = category.skills.filter(s => s.toLowerCase().includes(searchQuery.toLowerCase()));
+  if (filteredSkills.length === 0) return null;
+  return (
+    <div key={category.name} className="space-y-2">
+      <div className="flex items-center gap-2">
+        <span className="material-symbols-outlined text-[16px] text-primary">{category.icon}</span>
+        <span className="font-label-sm text-label-sm font-semibold text-on-surface">{category.name}</span>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {filteredSkills.map(skill => {
+          const isSelected = selectedSkills.includes(skill);
+          return (
+            <button 
+              key={skill}
+              onClick={() => toggleSkill(skill)}
+              className={"skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm font-medium transition-all " + (isSelected ? "bg-primary text-on-primary shadow-sm" : "bg-surface-container-low text-on-surface hover:bg-surface-container")}
+              type="button"
+            >
+              {skill} {isSelected ? '?' : '+'}
             </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-primary text-on-primary font-medium shadow-sm transition-all" data-skill="React" type="button">
-              React ✓
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="TypeScript" type="button">
-              TypeScript +
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="HTML/CSS" type="button">
-              HTML/CSS +
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="Next.js" type="button">
-              Next.js +
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="Tailwind CSS" type="button">
-              Tailwind CSS +
-            </button>
-</div>
-</div>
-{/*  Backend & Databases  */}
-<div className="space-y-2">
-<div className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[16px] text-primary">dns</span>
-<span className="font-label-sm text-label-sm font-semibold text-on-surface">Backend &amp; Databases</span>
-</div>
-<div className="flex flex-wrap gap-2">
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-primary text-on-primary font-medium shadow-sm transition-all" data-skill="Node.js" type="button">
-              Node.js ✓
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="Python" type="button">
-              Python +
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="PostgreSQL" type="button">
-              PostgreSQL +
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="SQL" type="button">
-              SQL +
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="Go" type="button">
-              Go +
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="Express" type="button">
-              Express +
-            </button>
-</div>
-</div>
-{/*  Tools & DevOps  */}
-<div className="space-y-2">
-<div className="flex items-center gap-2">
-<span className="material-symbols-outlined text-[16px] text-primary">terminal</span>
-<span className="font-label-sm text-label-sm font-semibold text-on-surface">Tools &amp; DevOps</span>
-</div>
-<div className="flex flex-wrap gap-2">
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-primary text-on-primary font-medium shadow-sm transition-all" data-skill="Git" type="button">
-              Git ✓
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="Docker" type="button">
-              Docker +
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="AWS" type="button">
-              AWS +
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="CI/CD" type="button">
-              CI/CD +
-            </button>
-<button className="skill-toggle-btn px-3 py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container-low text-on-surface hover:bg-surface-container font-medium transition-all" data-skill="Figma" type="button">
-              Figma +
-            </button>
-</div>
-</div>
+          );
+        })}
+      </div>
+    </div>
+  );
+})}
 </div>
 {/*  Upcoming Steps Preview Summary  */}
 <div className="pt-4 border-t border-surface-container space-y-2.5">
 <span className="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider block">
-          Upcoming Diagnostic Steps Preview
+          Diagnostic Setup Options
         </span>
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
 {/*  Step 2 Accordion Item  */}
 <div className="p-3 bg-surface-container-low/70 rounded-lg flex items-center justify-between">
-<div className="flex items-center gap-2.5 min-w-0">
+<div className="flex items-center gap-2.5 min-w-0 w-full">
 <span className="w-5 h-5 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm flex items-center justify-center font-bold">2</span>
-<div className="truncate">
+<div className="truncate flex-1">
 <p className="font-label-md text-label-md text-on-surface truncate">Experience Level</p>
-<p className="font-body-sm text-body-sm text-on-surface-variant truncate">Intermediate (1-3 yrs)</p>
+<select value={experienceLevel} onChange={(e) => setExperienceLevel(e.target.value)} className="bg-transparent font-body-sm text-body-sm text-primary font-medium focus:outline-none w-full cursor-pointer appearance-none">
+  <option value="Beginner (0-1 yrs)">Beginner (0-1 yrs)</option>
+  <option value="Intermediate (1-3 yrs)">Intermediate (1-3 yrs)</option>
+  <option value="Advanced (3+ yrs)">Advanced (3+ yrs)</option>
+</select>
 </div>
 </div>
 <span className="material-symbols-outlined text-[18px] text-outline">tune</span>
 </div>
 {/*  Step 3 Preview  */}
-<div className="p-3 bg-surface-container-low/70 rounded-lg flex items-center justify-between">
-<div className="flex items-center gap-2.5 min-w-0">
-<span className="w-5 h-5 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm flex items-center justify-center font-bold">3</span>
-<div className="truncate">
+<div className="p-3 bg-surface-container-low/70 rounded-lg flex items-start justify-between">
+<div className="flex items-start gap-2.5 min-w-0 w-full">
+<span className="w-5 h-5 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm flex items-center justify-center font-bold shrink-0 mt-0.5">3</span>
+<div className="flex-1 min-w-0 flex flex-col">
 <p className="font-label-md text-label-md text-on-surface truncate">Target Role</p>
-<p className="font-body-sm text-body-sm text-on-surface-variant truncate">Full Stack Developer</p>
+<select value={targetRole} onChange={(e) => setTargetRole(e.target.value)} className="bg-transparent font-body-sm text-body-sm text-primary font-medium focus:outline-none w-full cursor-pointer appearance-none">
+  <option value="Full Stack Developer">Full Stack Developer</option>
+  <option value="AI Engineer">AI Engineer</option>
+  <option value="Data Scientist">Data Scientist</option>
+  <option value="DevOps Engineer">DevOps Engineer</option>
+  <option value="Product Manager">Product Manager</option>
+  <option value="Other">Other (Please specify)</option>
+</select>
+{targetRole === 'Other' && (
+  <input type="text" value={otherTargetRole} onChange={(e) => setOtherTargetRole(e.target.value)} placeholder="Type target role..." className="mt-2 w-full bg-surface-container-lowest border border-outline/30 rounded px-2 py-1.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary shadow-sm" />
+)}
 </div>
 </div>
-<span className="material-symbols-outlined text-[18px] text-outline">work_outline</span>
+<span className="material-symbols-outlined text-[18px] text-outline mt-0.5 shrink-0">work_outline</span>
 </div>
 {/*  Step 4 Preview  */}
 <div className="p-3 bg-surface-container-low/70 rounded-lg flex items-center justify-between">
-<div className="flex items-center gap-2.5 min-w-0">
+<div className="flex items-center gap-2.5 min-w-0 w-full">
 <span className="w-5 h-5 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm flex items-center justify-center font-bold">4</span>
-<div className="truncate">
+<div className="truncate flex-1">
 <p className="font-label-md text-label-md text-on-surface truncate">Career Goal</p>
-<p className="font-body-sm text-body-sm text-on-surface-variant truncate">Senior Fullstack in 6 mos</p>
+<select value={careerGoal} onChange={(e) => setCareerGoal(e.target.value)} className="bg-transparent font-body-sm text-body-sm text-primary font-medium focus:outline-none w-full cursor-pointer appearance-none">
+  <option value="Senior role in 6 mos">Senior role in 6 mos</option>
+  <option value="Career switch in 12 mos">Career switch in 12 mos</option>
+  <option value="Foundational Mastery">Foundational Mastery</option>
+  <option value="Promotion to Lead/Manager">Promotion to Lead/Manager</option>
+  <option value="Freelance / Contract work">Freelance / Contract work</option>
+  <option value="Upskilling for current role">Upskilling for current role</option>
+  <option value="Just exploring">Just exploring</option>
+</select>
 </div>
 </div>
 <span className="material-symbols-outlined text-[18px] text-outline">flag</span>
 </div>
 {/*  Step 5 Preview  */}
 <div className="p-3 bg-surface-container-low/70 rounded-lg flex items-center justify-between">
-<div className="flex items-center gap-2.5 min-w-0">
+<div className="flex items-center gap-2.5 min-w-0 w-full">
 <span className="w-5 h-5 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm flex items-center justify-center font-bold">5</span>
-<div className="truncate">
+<div className="truncate flex-1">
 <p className="font-label-md text-label-md text-on-surface truncate">Learning Availability</p>
-<p className="font-body-sm text-body-sm text-on-surface-variant truncate">1 hr/day • 5 days/wk</p>
+<select value={learningAvailability} onChange={(e) => setLearningAvailability(e.target.value)} className="bg-transparent font-body-sm text-body-sm text-primary font-medium focus:outline-none w-full cursor-pointer appearance-none">
+  <option value="30 min/day • 3 days/wk">30 min/day • 3 days/wk</option>
+  <option value="1 hr/day • 5 days/wk">1 hr/day • 5 days/wk</option>
+  <option value="2+ hr/day • 7 days/wk">2+ hr/day • 7 days/wk</option>
+  <option value="Full Time (40+ hrs/wk)">Full Time (40+ hrs/wk)</option>
+  <option value="Weekends Only">Weekends Only</option>
+  <option value="Flexible / Variable days">Flexible / Variable days</option>
+</select>
 </div>
 </div>
 <span className="material-symbols-outlined text-[18px] text-outline">schedule</span>
@@ -274,7 +284,15 @@ export default function LearnerOnboardingEdupath() {
       </button>
 <div className="flex items-center gap-3">
 <span className="font-body-sm text-body-sm text-on-surface-variant hidden sm:inline">Baseline saved</span>
-<button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm transition-all group" id="continue-btn" type="button">
+<button onClick={async () => {
+  const finalTargetRole = targetRole === 'Other' ? otherTargetRole : targetRole;
+  try {
+    await updateProfile({ target_role: finalTargetRole });
+  } catch (error) {
+    console.error('Failed to update profile, proceeding with onboarding...', error);
+  }
+  navigate('/onboardingcomplete');
+}} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm transition-all group" id="continue-btn" type="button">
 <span>Continue to Experience Level</span>
 <span className="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
 </button>
@@ -291,3 +309,4 @@ export default function LearnerOnboardingEdupath() {
     </div>
   );
 }
+
