@@ -1,8 +1,51 @@
-import React from 'react';
-import { useSkillGaps } from '../../hooks/useLearning';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSkillGaps, useVerifySkill } from '../../hooks/useLearning';
+import { useUploadStore } from '../../store/uploadStore';
 
 export default function SkillGapOverviewReadinessEdupath() {
+  const navigate = useNavigate();
+  const [filterTab, setFilterTab] = useState<'all' | 'acquired' | 'in_progress' | 'gaps'>('all');
   const { data: gaps, isLoading } = useSkillGaps();
+  const { result: uploadResult } = useUploadStore();
+  const verifyMutation = useVerifySkill();
+  const [verifyingSkillId, setVerifyingSkillId] = useState<number | null>(null);
+  const [verificationResult, setVerificationResult] = useState<any>(null);
+
+  const handleVerify = (skillId: number) => {
+    setVerifyingSkillId(skillId);
+    verifyMutation.mutate(skillId, {
+      onSuccess: (data: any) => {
+        setVerificationResult(data);
+        setVerifyingSkillId(null);
+      },
+      onError: () => {
+        setVerifyingSkillId(null);
+      }
+    });
+  };
+
+  const totalSkillsCount = gaps?.length || 0;
+  const acquiredSkills = gaps?.filter((g: any) => g.status === 'COMPLETED' || g.current_proficiency?.toLowerCase() === g.required_proficiency?.toLowerCase()) || [];
+  const inProgressSkills = gaps?.filter((g: any) => g.status === 'IN_PROGRESS' || (g.current_proficiency && g.current_proficiency !== 'NONE' && g.current_proficiency?.toLowerCase() !== g.required_proficiency?.toLowerCase())) || [];
+  const criticalGaps = gaps?.filter((g: any) => g.current_proficiency?.toLowerCase() !== g.required_proficiency?.toLowerCase()) || [];
+
+  const acquiredCount = acquiredSkills.length;
+  const inProgressCount = inProgressSkills.length;
+  const criticalGapsCount = criticalGaps.length;
+
+  const readinessPercent = totalSkillsCount > 0 
+    ? Math.round((acquiredCount / totalSkillsCount) * 100) 
+    : (uploadResult?.readinessScore ? Math.round(uploadResult.readinessScore * 100) : 65);
+
+  const displayedGaps = (gaps || []).filter((gap: any) => {
+    const isAcquired = gap.status === 'COMPLETED' || gap.current_proficiency?.toLowerCase() === gap.required_proficiency?.toLowerCase();
+    const isInProgress = gap.status === 'IN_PROGRESS' || (gap.current_proficiency && gap.current_proficiency !== 'NONE' && !isAcquired);
+    if (filterTab === 'acquired') return isAcquired;
+    if (filterTab === 'in_progress') return isInProgress;
+    if (filterTab === 'gaps') return !isAcquired;
+    return true;
+  });
 
   if (isLoading) {
     return <div className="min-h-screen bg-surface flex items-center justify-center p-8 text-slate-500">Loading your skill gaps...</div>;
@@ -13,9 +56,9 @@ export default function SkillGapOverviewReadinessEdupath() {
       <main className="p-8 max-w-7xl w-full mx-auto flex flex-col gap-6">
 {/*  Breadcrumbs  */}
 <nav className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-<a className="hover:text-indigo-600 transition-colors" href="#">Dashboard</a>
+<button onClick={() => navigate('/learnerdashboardproduction')} className="hover:text-indigo-600 transition-colors cursor-pointer">Dashboard</button>
 <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-<a className="hover:text-indigo-600 transition-colors" href="#">Skill Gaps</a>
+<span className="hover:text-indigo-600 transition-colors cursor-pointer">Skill Gaps</span>
 <span className="material-symbols-outlined text-[14px]">chevron_right</span>
 <span className="text-slate-700">Readiness Diagnostic</span>
 </nav>
@@ -25,7 +68,7 @@ export default function SkillGapOverviewReadinessEdupath() {
 <div className="flex flex-wrap items-center gap-3">
 <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Your Skill Gaps</h1>
 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
-              Diagnostic v2.4 Active
+              Diagnostic Active
             </span>
 </div>
 <p className="text-slate-500 text-sm max-w-3xl">
@@ -39,17 +82,18 @@ export default function SkillGapOverviewReadinessEdupath() {
             </div>
 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 text-slate-500 text-xs font-medium shadow-xs">
 <span className="material-symbols-outlined text-[15px] text-slate-400">analytics</span>
-              Benchmark: 500+ Live Tech Job Postings (Q1 2025)
+              Benchmark: Live Tech Job Postings Index
             </div>
 </div>
 </div>
 <div className="flex items-center gap-3 self-stretch sm:self-auto shrink-0">
-<button className="inline-flex items-center justify-center gap-2 px-4 h-10 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-all shadow-xs">
-<span className="material-symbols-outlined text-[18px]">download</span>
-            Export Diagnostic PDF
+<button onClick={() => navigate('/documentcenterresumeupload')} className="inline-flex items-center justify-center gap-2 px-4 h-10 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-all shadow-xs cursor-pointer">
+<span className="material-symbols-outlined text-[18px]">upload_file</span>
+            Upload Fresh CV
           </button>
-<button className="inline-flex items-center justify-center h-10 w-10 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all shadow-sm shadow-indigo-200">
-<span className="material-symbols-outlined text-[18px]">share</span>
+<button onClick={() => navigate('/mylearningworkspacetodaystasks')} className="inline-flex items-center justify-center gap-2 px-4 h-10 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-all shadow-sm shadow-indigo-200 cursor-pointer">
+<span className="material-symbols-outlined text-[18px]">explore</span>
+            View Learning Path
 </button>
 </div>
 </div>
@@ -62,16 +106,16 @@ export default function SkillGapOverviewReadinessEdupath() {
 <span className="material-symbols-outlined text-indigo-600 text-[20px]">speed</span>
 </div>
 <div className="my-3 flex items-baseline gap-3">
-<span className="text-3xl font-extrabold text-slate-900 tracking-tight">62%</span>
+<span className="text-3xl font-extrabold text-slate-900 tracking-tight">{readinessPercent}%</span>
 <span className="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
 <span className="material-symbols-outlined text-xs mr-0.5">trending_up</span>
               +14%
             </span>
 </div>
 <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-<div className="bg-indigo-600 h-2 rounded-full" ></div>
+<div className="bg-indigo-600 h-2 rounded-full transition-all duration-700" style={{ width: `${readinessPercent}%` }}></div>
 </div>
-<p className="text-xs text-slate-500 mt-2">from 48% onboarding baseline</p>
+<p className="text-xs text-slate-500 mt-2">from baseline profile analysis</p>
 </div>
 {/*  2. Skills Acquired  */}
 <div className="flex flex-col justify-between p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
@@ -80,11 +124,11 @@ export default function SkillGapOverviewReadinessEdupath() {
 <span className="material-symbols-outlined text-emerald-600 text-[20px]">check_circle</span>
 </div>
 <div className="my-3">
-<span className="text-3xl font-extrabold text-slate-900 tracking-tight">8 Skills</span>
+<span className="text-3xl font-extrabold text-slate-900 tracking-tight">{acquiredCount} Skills</span>
 </div>
 <p className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
 <span className="material-symbols-outlined text-xs">verified</span>
-            Strong alignment with market demand
+            Meets target role benchmark
           </p>
 <p className="text-xs text-slate-400 mt-1">Verified via portfolio and tests</p>
 </div>
@@ -95,13 +139,13 @@ export default function SkillGapOverviewReadinessEdupath() {
 <span className="material-symbols-outlined text-indigo-600 text-[20px]">pending_actions</span>
 </div>
 <div className="my-3">
-<span className="text-3xl font-extrabold text-slate-900 tracking-tight">3 Skills</span>
+<span className="text-3xl font-extrabold text-slate-900 tracking-tight">{inProgressCount} Skills</span>
 </div>
 <p className="text-xs font-semibold text-indigo-600 flex items-center gap-1">
 <span className="material-symbols-outlined text-xs">sync</span>
-            Partial match &amp; active practice
+            Active learning modules assigned
           </p>
-<p className="text-xs text-slate-400 mt-1">Average 55% completion rate</p>
+<p className="text-xs text-slate-400 mt-1">Bridging to required level</p>
 </div>
 {/*  4. Critical Skill Gaps  */}
 <div className="flex flex-col justify-between p-5 rounded-2xl bg-white border border-red-200 shadow-xs bg-gradient-to-b from-white to-red-50/20">
@@ -110,13 +154,13 @@ export default function SkillGapOverviewReadinessEdupath() {
 <span className="material-symbols-outlined text-red-600 text-[20px]">error_outline</span>
 </div>
 <div className="my-3">
-<span className="text-3xl font-extrabold text-red-600 tracking-tight">{gaps?.length || 0} Gaps</span>
+<span className="text-3xl font-extrabold text-red-600 tracking-tight">{criticalGapsCount} Gaps</span>
 </div>
 <p className="text-xs font-semibold text-red-600 flex items-center gap-1">
 <span className="material-symbols-outlined text-xs">priority_high</span>
             Immediate priority for full-stack
           </p>
-<p className="text-xs text-slate-400 mt-1">Estimated effort: ~28 hours total</p>
+<p className="text-xs text-slate-400 mt-1">Targeted by adaptive engine</p>
 </div>
 </div>
 {/*  Main 2-Column Content Grid  */}
@@ -132,30 +176,38 @@ export default function SkillGapOverviewReadinessEdupath() {
 </div>
 {/*  Filter Tabs  */}
 <div className="inline-flex p-1 bg-slate-100 rounded-xl text-xs font-medium text-slate-600">
-<button className="px-3 py-1.5 rounded-lg bg-white text-indigo-700 font-bold shadow-xs">All (15)</button>
-<button className="px-2.5 py-1.5 rounded-lg hover:text-slate-900 transition-colors">Acquired (8)</button>
-<button className="px-2.5 py-1.5 rounded-lg hover:text-slate-900 transition-colors">In Progress (3)</button>
-<button className="px-2.5 py-1.5 rounded-lg hover:text-slate-900 transition-colors">Gaps (4)</button>
+<button onClick={() => setFilterTab('all')} className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${filterTab === 'all' ? 'bg-white text-indigo-700 font-bold shadow-xs' : 'hover:text-slate-900'}`}>All ({totalSkillsCount})</button>
+<button onClick={() => setFilterTab('acquired')} className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer ${filterTab === 'acquired' ? 'bg-white text-indigo-700 font-bold shadow-xs' : 'hover:text-slate-900'}`}>Acquired ({acquiredCount})</button>
+<button onClick={() => setFilterTab('in_progress')} className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer ${filterTab === 'in_progress' ? 'bg-white text-indigo-700 font-bold shadow-xs' : 'hover:text-slate-900'}`}>In Progress ({inProgressCount})</button>
+<button onClick={() => setFilterTab('gaps')} className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer ${filterTab === 'gaps' ? 'bg-white text-indigo-700 font-bold shadow-xs' : 'hover:text-slate-900'}`}>Gaps ({criticalGapsCount})</button>
 </div>
 </div>
 {/*  Progress Bars List  */}
 <div className="flex flex-col gap-5 pt-5">
-{gaps?.map((gap: any) => (
-<div key={gap.id} className="flex flex-col gap-1.5">
-<div className="flex items-center justify-between text-xs">
-<div className="flex items-center gap-2">
-<span className="font-bold text-slate-900 text-sm">{gap.skill.name}</span>
-<span className={`px-2 py-0.5 rounded-md text-[11px] font-semibold ${gap.current_proficiency === gap.required_proficiency ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
-  {gap.current_proficiency === gap.required_proficiency ? 'Acquired' : 'Needs Attention'}
-</span>
-</div>
-<span className="font-bold text-slate-900 text-sm">{gap.current_proficiency === gap.required_proficiency ? '100%' : '50%'}</span>
-</div>
-<div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-<div className={`${gap.current_proficiency === gap.required_proficiency ? 'bg-emerald-500' : 'bg-amber-500'} h-2.5 rounded-full transition-all duration-500`} style={{ width: gap.current_proficiency === gap.required_proficiency ? '100%' : '50%' }} ></div>
-</div>
-</div>
-))}
+{displayedGaps.length > 0 ? (
+  displayedGaps.map((gap: any) => {
+    const isAcquired = gap.status === 'COMPLETED' || gap.current_proficiency?.toLowerCase() === gap.required_proficiency?.toLowerCase();
+    const pct = isAcquired ? 100 : gap.current_proficiency === 'INTERMEDIATE' ? 65 : gap.current_proficiency === 'BEGINNER' ? 35 : 15;
+    return (
+      <div key={gap.id} className="flex flex-col gap-1.5">
+        <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-slate-900 text-sm">{gap.skill.name}</span>
+            <span className={`px-2 py-0.5 rounded-md text-[11px] font-semibold ${isAcquired ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
+              {isAcquired ? 'Acquired' : 'Needs Attention'}
+            </span>
+          </div>
+          <span className="font-bold text-slate-900 text-sm">{pct}%</span>
+        </div>
+        <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+          <div className={`${isAcquired ? 'bg-emerald-500' : 'bg-amber-500'} h-2.5 rounded-full transition-all duration-500`} style={{ width: `${pct}%` }}></div>
+        </div>
+      </div>
+    );
+  })
+) : (
+  <p className="text-sm text-slate-500 py-4 text-center">No skills matching this filter.</p>
+)}
 </div>
 </div>
 {/*  2. Current Level vs Target Benchmark Matrix  */}
@@ -163,10 +215,74 @@ export default function SkillGapOverviewReadinessEdupath() {
 <div className="flex items-center justify-between pb-4 border-b border-slate-100">
 <div>
 <h2 className="text-base font-bold text-slate-900 tracking-tight">Current Level vs Target Benchmark</h2>
-<p className="text-xs text-slate-500">Granular competency mapping across evaluation levels (L0 to L4)</p>
+<p className="text-xs text-slate-500">Granular competency mapping across evaluation levels</p>
 </div>
-<span className="text-xs font-semibold text-slate-400 hidden sm:inline-block">Updated today</span>
+<span className="text-xs font-semibold text-slate-400 hidden sm:inline-block">Live Evaluation</span>
 </div>
+
+{/* Skill Verification Evidence Audit Result */}
+{verificationResult && (
+  <div className="mt-4 p-5 rounded-2xl bg-slate-900 text-white shadow-md relative">
+    <button 
+      onClick={() => setVerificationResult(null)}
+      className="absolute top-3 right-3 text-slate-400 hover:text-white cursor-pointer"
+    >
+      <span className="material-symbols-outlined text-[18px]">close</span>
+    </button>
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+      <div className="flex items-center gap-2.5">
+        <span className="material-symbols-outlined text-emerald-400 text-[24px]">verified</span>
+        <div>
+          <h4 className="font-bold text-base text-white">
+            Skill Verified: {verificationResult.skill_name}
+          </h4>
+          <p className="text-xs text-slate-300">
+            Multi-source deterministic validation with AI audit
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+          {verificationResult.confidence_level}
+        </span>
+        <span className="text-2xl font-extrabold text-white">
+          {verificationResult.verified_score}%
+        </span>
+      </div>
+    </div>
+
+    {/* Evidence Score Breakdown */}
+    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 my-3 text-xs">
+      <div className="bg-slate-800/60 p-2.5 rounded-xl border border-slate-700/50">
+        <span className="text-slate-400 block text-[10px] uppercase font-bold">Resume</span>
+        <span className="font-extrabold text-white text-sm">{verificationResult.breakdown.resume_score} / 25</span>
+      </div>
+      <div className="bg-slate-800/60 p-2.5 rounded-xl border border-slate-700/50">
+        <span className="text-slate-400 block text-[10px] uppercase font-bold">Projects</span>
+        <span className="font-extrabold text-white text-sm">{verificationResult.breakdown.project_score} / 20</span>
+      </div>
+      <div className="bg-slate-800/60 p-2.5 rounded-xl border border-slate-700/50">
+        <span className="text-slate-400 block text-[10px] uppercase font-bold">Practice</span>
+        <span className="font-extrabold text-white text-sm">{verificationResult.breakdown.practice_score} / 25</span>
+      </div>
+      <div className="bg-slate-800/60 p-2.5 rounded-xl border border-slate-700/50">
+        <span className="text-slate-400 block text-[10px] uppercase font-bold">Assessment</span>
+        <span className="font-extrabold text-white text-sm">{verificationResult.breakdown.assessment_score} / 20</span>
+      </div>
+      <div className="bg-slate-800/60 p-2.5 rounded-xl border border-slate-700/50">
+        <span className="text-slate-400 block text-[10px] uppercase font-bold">Progress</span>
+        <span className="font-extrabold text-white text-sm">{verificationResult.breakdown.progress_score} / 10</span>
+      </div>
+    </div>
+
+    {/* AI Explanation */}
+    <div className="p-3 rounded-xl bg-slate-800/70 border border-slate-700 text-xs text-slate-200">
+      <strong className="text-indigo-400">AI Verification Audit: </strong>
+      {verificationResult.ai_explanation}
+    </div>
+  </div>
+)}
+
 <div className="overflow-x-auto mt-3">
 <table className="w-full text-left border-collapse">
 <thead>
@@ -174,11 +290,12 @@ export default function SkillGapOverviewReadinessEdupath() {
 <th className="py-3 px-2">Skill / Area</th>
 <th className="py-3 px-2">Current Level</th>
 <th className="py-3 px-2">Target Role Benchmark</th>
-<th className="py-3 px-2 text-right">Status</th>
+<th className="py-3 px-2 text-center">Status</th>
+<th className="py-3 px-2 text-right">Skill Verification</th>
 </tr>
 </thead>
 <tbody className="divide-y divide-slate-100 text-xs">
-{gaps?.map((gap: any) => (
+{displayedGaps.map((gap: any) => (
 <tr key={gap.id} className="hover:bg-slate-50/60 transition-colors">
 <td className="py-3.5 px-2 font-bold text-slate-900 text-sm">{gap.skill.name}</td>
 <td className="py-3.5 px-2">
@@ -187,7 +304,7 @@ export default function SkillGapOverviewReadinessEdupath() {
                       </span>
 </td>
 <td className="py-3.5 px-2 text-slate-600 font-medium">{gap.required_proficiency}</td>
-<td className="py-3.5 px-2 text-right">
+<td className="py-3.5 px-2 text-center">
 {gap.current_proficiency === gap.required_proficiency ? (
 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
 <span className="material-symbols-outlined text-[14px]">check</span>
@@ -199,6 +316,18 @@ export default function SkillGapOverviewReadinessEdupath() {
                         Gap
                       </span>
 )}
+</td>
+<td className="py-3.5 px-2 text-right">
+  <button
+    onClick={() => handleVerify(gap.skill.id)}
+    disabled={verifyingSkillId === gap.skill.id}
+    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors border border-indigo-200 cursor-pointer disabled:opacity-50"
+  >
+    <span className="material-symbols-outlined text-[14px]">
+      {verifyingSkillId === gap.skill.id ? 'sync' : 'verified_user'}
+    </span>
+    {verifyingSkillId === gap.skill.id ? 'Verifying...' : 'Verify Skill'}
+  </button>
 </td>
 </tr>
 ))}
@@ -249,10 +378,10 @@ export default function SkillGapOverviewReadinessEdupath() {
 <p className="text-xs text-indigo-100 mt-1 mb-5 leading-relaxed">
               Estimated effort: <strong className="text-white">5–7 hours</strong> to bridge from {gaps && gaps.length > 0 ? gaps[0].current_proficiency : "Beginner"} to {gaps && gaps.length > 0 ? gaps[0].required_proficiency : "Intermediate"} benchmark.
             </p>
-<a className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-indigo-700 font-bold text-xs hover:bg-slate-50 transition-all shadow-sm" href="#">
+<button onClick={() => navigate('/mylearningworkspacetodaystasks')} className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-indigo-700 font-bold text-xs hover:bg-slate-50 transition-all shadow-sm cursor-pointer" type="button">
 <span>View Priority Gaps &amp; Objectives</span>
 <span className="material-symbols-outlined text-sm">arrow_forward</span>
-</a>
+</button>
 </div>
 {/*  3. Market Demand Metric  */}
 <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">

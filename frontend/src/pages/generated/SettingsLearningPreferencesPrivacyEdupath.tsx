@@ -1,7 +1,11 @@
+import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../hooks/useSettings';
+import { useUploadStore } from '../../store/uploadStore';
 
 export default function SettingsLearningPreferencesPrivacyEdupath() {
+  const navigate = useNavigate();
   const { settings, isUpdating } = useSettings();
+  const { result: uploadResult } = useUploadStore();
 
   return (
     <div className="min-h-screen bg-surface">
@@ -11,7 +15,7 @@ export default function SettingsLearningPreferencesPrivacyEdupath() {
 {/*  Top Breadcrumbs & Page Metadata Header  */}
 <div className="flex flex-col gap-4">
 <nav className="flex items-center gap-2 font-label-md text-label-md text-secondary">
-<a className="hover:text-primary transition-colors" href="#">Dashboard</a>
+<button onClick={() => navigate('/learnerdashboardproduction')} className="hover:text-primary transition-colors cursor-pointer">Dashboard</button>
 <span className="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
 <a className="hover:text-primary transition-colors" href="#">Settings</a>
 <span className="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
@@ -248,34 +252,48 @@ export default function SettingsLearningPreferencesPrivacyEdupath() {
 {/*  Document Center Privacy  */}
 <div className="flex flex-col gap-3 pt-2">
 <span className="font-label-md text-label-md text-on-surface">Document Center &amp; Cryptographic Assets</span>
-<div className="p-4 rounded-xl bg-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-<div className="flex items-center gap-3 min-w-0">
-<div className="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary flex-shrink-0 shadow-sm">
-<span className="material-symbols-outlined text-[20px]">description</span>
-</div>
-<div className="flex flex-col min-w-0">
-<span className="font-label-md text-label-md text-on-surface truncate">Tejas_Patil_Resume_2025.pdf</span>
-<div className="flex items-center gap-2 text-secondary font-label-sm text-label-sm">
-<span>1.4 MB</span>
-<span>•</span>
-<span className="text-tertiary font-semibold flex items-center gap-1">
-<span className="material-symbols-outlined text-[12px]">lock</span>
-<span>SOC-2 AES-256 Encrypted</span>
-</span>
-</div>
-</div>
-</div>
-<div className="flex items-center gap-2 self-start sm:self-center">
-<button className="px-3 py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label-md text-label-md font-semibold transition-colors shadow-sm flex items-center gap-1" type="button">
-<span className="material-symbols-outlined text-[16px]">download</span>
-<span>Download Copy</span>
-</button>
-<button className="px-3 py-1.5 rounded-lg bg-surface-container-lowest hover:bg-error-container text-error font-label-md text-label-md font-semibold transition-colors shadow-sm flex items-center gap-1" type="button">
-<span className="material-symbols-outlined text-[16px]">delete</span>
-<span>Delete Document</span>
-</button>
-</div>
-</div>
+{uploadResult?.fileName ? (
+  <div className="p-4 rounded-xl bg-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="flex items-center gap-3 min-w-0">
+      <div className="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary flex-shrink-0 shadow-sm">
+        <span className="material-symbols-outlined text-[20px]">description</span>
+      </div>
+      <div className="flex flex-col min-w-0">
+        <span className="font-label-md text-label-md text-on-surface truncate">{uploadResult.fileName}</span>
+        <div className="flex items-center gap-2 text-secondary font-label-sm text-label-sm">
+          <span>{uploadResult.skills?.length || 0} extracted competencies</span>
+          <span>•</span>
+          <span className="text-tertiary font-semibold flex items-center gap-1">
+            <span className="material-symbols-outlined text-[12px]">lock</span>
+            <span>SOC-2 AES-256 Encrypted</span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div className="flex items-center gap-2 self-start sm:self-center">
+      <button onClick={() => navigate('/documentcenterresumeupload')} className="px-3 py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label-md text-label-md font-semibold transition-colors shadow-sm flex items-center gap-1 cursor-pointer" type="button">
+        <span className="material-symbols-outlined text-[16px]">visibility</span>
+        <span>View In Roster</span>
+      </button>
+    </div>
+  </div>
+) : (
+  <div className="p-4 rounded-xl bg-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="flex items-center gap-3 min-w-0">
+      <div className="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-secondary flex-shrink-0 shadow-sm">
+        <span className="material-symbols-outlined text-[20px]">upload_file</span>
+      </div>
+      <div className="flex flex-col min-w-0">
+        <span className="font-label-md text-label-md text-on-surface truncate">No active resume on file</span>
+        <span className="text-secondary font-label-sm text-label-sm">Upload a PDF or DOCX to unlock automated skill gap detection</span>
+      </div>
+    </div>
+    <button onClick={() => navigate('/documentcenterresumeupload')} className="px-3 py-1.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary font-label-md text-label-md font-semibold transition-colors shadow-sm flex items-center gap-1 cursor-pointer" type="button">
+      <span className="material-symbols-outlined text-[16px]">add</span>
+      <span>Upload Document</span>
+    </button>
+  </div>
+)}
 </div>
 {/*  Export & Danger Actions  */}
 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t border-outline-variant/20">

@@ -76,3 +76,21 @@ class LearningPathResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class EvidenceBreakdown(BaseModel):
+    resume_score: int
+    project_score: int
+    practice_score: int
+    assessment_score: int
+    progress_score: int
+    evidence_details: List[str] = []
+
+class SkillVerificationResponse(BaseModel):
+    skill_id: int
+    skill_name: str
+    verified_score: int
+    confidence_level: str
+    breakdown: EvidenceBreakdown
+    ai_explanation: str
+    verified_at: datetime
+

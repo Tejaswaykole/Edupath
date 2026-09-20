@@ -22,9 +22,17 @@ CONDITIONS = {
     "PROGRESS_STAGNATION": "PROGRESS_STAGNATION",
 }
 
+def _make_utc(dt):
+    if dt is None:
+        return None
+    if getattr(dt, "tzinfo", None) is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
 def observe(state: AgentState, db: Session) -> Dict[str, Any]:
     """
     Gather signals deterministically across LearningProgress, AssessmentAttempts, and PracticeAttempts.
+    Calculates actual activity timestamps and inactivity windowing for proactive learning drop detection.
     """
     learner_id = state["learner_id"]
     now = datetime.now(timezone.utc)
@@ -46,14 +54,20 @@ def observe(state: AgentState, db: Session) -> Dict[str, Any]:
         "recent_assessment_title": None,
         "affected_skill": None,
         "weak_topics": [],
+        "days_inactive": 0,
         "observation_summary": ""
     }
     
+    activity_timestamps = []
     for p in recent_progress:
         if p.status == "COMPLETED":
             signals["recent_activities_completed"] += 1
+            if p.completed_at:
+                activity_timestamps.append(_make_utc(p.completed_at))
         else:
             signals["recent_activities_started"] += 1
+            if p.started_at:
+                activity_timestamps.append(_make_utc(p.started_at))
         
         signals["total_time_spent_mins"] += (p.time_spent_mins or 0)
         
@@ -69,6 +83,11 @@ def observe(state: AgentState, db: Session) -> Dict[str, Any]:
     ).order_by(AssessmentAttempt.id.desc()).limit(5).all()
 
     for att in recent_assessments:
+        if att.completed_at:
+            activity_timestamps.append(_make_utc(att.completed_at))
+        elif att.started_at:
+            activity_timestamps.append(_make_utc(att.started_at))
+
         if att.score is not None:
             signals["recent_assessment_scores"].append(att.score)
             if signals["recent_assessment_score"] is None:
@@ -85,12 +104,10 @@ def observe(state: AgentState, db: Session) -> Dict[str, Any]:
             for ans in att.answers:
                 if ans.is_correct is False and ans.question:
                     content = ans.question.content or ""
-                    # Extract skill name if mapped
                     if ans.question.skill and ans.question.skill.name:
                         signals["affected_skill"] = ans.question.skill.name
                         if ans.question.skill.name not in signals["weak_topics"]:
                             signals["weak_topics"].append(ans.question.skill.name)
-                    # Extract recognizable weak topics
                     for kw in ["useState", "useEffect", "State Management", "Async/Await", "Hooks", "Component Lifecycle", "Redis", "Docker", "REST API", "Database", "Authentication"]:
                         if kw.lower() in content.lower() and kw not in signals["weak_topics"]:
                             signals["weak_topics"].append(kw)
@@ -104,6 +121,8 @@ def observe(state: AgentState, db: Session) -> Dict[str, Any]:
     ).order_by(PracticeAttempt.completed_at.desc()).limit(5).all()
 
     for pr in recent_practices:
+        if pr.completed_at:
+            activity_timestamps.append(_make_utc(pr.completed_at))
         if pr.score is not None:
             if pr.score < 50:
                 signals["low_scores"] += 1
@@ -112,7 +131,22 @@ def observe(state: AgentState, db: Session) -> Dict[str, Any]:
             if pr.task and pr.task.skill and not signals["affected_skill"]:
                 signals["affected_skill"] = pr.task.skill.name
 
-    # 4. Fallback affected skill from top skill gap if not yet identified
+    # 4. Inactivity Window Calculation
+    active_path = db.query(LearningPath).filter_by(learner_id=learner_id, status="ACTIVE").first()
+    days_inactive = 0
+    if activity_timestamps:
+        latest_active = max(activity_timestamps)
+        days_inactive = max(0, (now - latest_active).days)
+    elif active_path:
+        path_created = _make_utc(getattr(active_path, "created_at", None))
+        if path_created:
+            days_inactive = max(0, (now - path_created).days)
+        else:
+            days_inactive = 3 if signals["recent_activities_completed"] == 0 else 0
+
+    signals["days_inactive"] = days_inactive
+
+    # 5. Fallback affected skill from top skill gap if not yet identified
     if not signals["affected_skill"]:
         top_gap = db.query(SkillGap).filter_by(learner_id=learner_id).order_by(SkillGap.priority.desc()).first()
         if top_gap and top_gap.skill:
@@ -124,7 +158,9 @@ def observe(state: AgentState, db: Session) -> Dict[str, Any]:
         signals["weak_topics"] = ["Core Concepts", "Implementation Patterns"]
 
     # Formulate human-readable observation summary
-    if signals["recent_assessment_score"] is not None:
+    if signals["days_inactive"] >= 3:
+        signals["observation_summary"] = f"Learner inactive for {signals['days_inactive']} days with pending curriculum"
+    elif signals["recent_assessment_score"] is not None:
         signals["observation_summary"] = f"{signals['recent_assessment_title'] or 'Assessment'} score: {signals['recent_assessment_score']}%"
     elif signals["low_scores"] > 0:
         signals["observation_summary"] = f"Detected {signals['low_scores']} low score checkpoint(s) in {signals['affected_skill']}"
@@ -143,23 +179,27 @@ def analyze_and_detect(state: AgentState, db: Session) -> Dict[str, Any]:
     conditions = []
     recent_scores = signals.get("recent_assessment_scores", [])
     recent_score = signals.get("recent_assessment_score")
+    days_inactive = signals.get("days_inactive", 0)
     
-    # 1. Improved Score after previous struggle
-    if len(recent_scores) >= 2 and recent_scores[0] >= 70 and any(s < 50 for s in recent_scores[1:]):
+    # 1. Proactive Inactivity / Learning Drop (3+ days without activity)
+    if days_inactive >= 3:
+        conditions.append(CONDITIONS["LEARNING_DROP"])
+    # 2. Improved Score after previous struggle
+    elif len(recent_scores) >= 2 and recent_scores[0] >= 70 and any(s < 50 for s in recent_scores[1:]):
         conditions.append("IMPROVEMENT")
-    # 2. Repeated failures
+    # 3. Repeated failures
     elif signals["low_scores"] >= 2:
         conditions.append(CONDITIONS["STRUGGLE"])
-    # 3. Single struggle (score < 50%)
+    # 4. Single struggle (score < 50%)
     elif signals["low_scores"] == 1:
         conditions.append(CONDITIONS["STRUGGLE"])
-    # 4. High performance / excellence (score >= 85%)
+    # 5. High performance / excellence (score >= 85%)
     elif (recent_score is not None and recent_score >= 85) or signals["high_scores"] >= 1:
         conditions.append(CONDITIONS["DIFFICULTY_MISMATCH"])
-    # 5. Moderate performance (50% <= score < 85%)
+    # 6. Moderate performance (50% <= score < 85%)
     elif recent_score is not None and 50 <= recent_score < 85:
         conditions.append(CONDITIONS["PROGRESS_STAGNATION"])
-    # 6. Inactivity / learning drop
+    # 7. Inactivity / learning drop with zero activities recorded
     elif signals["total_time_spent_mins"] == 0 and signals["recent_activities_completed"] == 0:
         conditions.append(CONDITIONS["LEARNING_DROP"])
         
@@ -414,12 +454,36 @@ def act(state: AgentState, db: Session) -> Dict[str, Any]:
         new_title = f"Prerequisite Review: {skill_name} Foundations"
         existing = db.query(LearningActivity).filter_by(module_id=module.id, title=new_title).first()
         if not existing:
+            # Shift existing activities in module by 1 to delay dependent topic
+            existing_activities = db.query(LearningActivity).filter_by(module_id=module.id).all()
+            for act_item in existing_activities:
+                act_item.order_index = (act_item.order_index or 0) + 1
             new_activity = LearningActivity(
                 module_id=module.id,
                 title=new_title,
                 description=f"Deep foundational prerequisite review for {skill_name} before proceeding to complex modules. {decision.reason}",
                 activity_type="VIDEO",
                 estimated_duration_mins=30,
+                difficulty="BEGINNER",
+                order_index=0,
+                weekly_plan_id=weekly_plan_id
+            )
+            db.add(new_activity)
+            db.flush()
+
+    elif decision.recommended_action == "DECREASE_DIFFICULTY" and module:
+        new_title = f"Foundational Reinforcement: {skill_name}"
+        existing = db.query(LearningActivity).filter_by(module_id=module.id, title=new_title).first()
+        if not existing:
+            for act_item in module.activities:
+                if act_item.difficulty in ["INTERMEDIATE", "ADVANCED"]:
+                    act_item.difficulty = "BEGINNER"
+            new_activity = LearningActivity(
+                module_id=module.id,
+                title=new_title,
+                description=f"Calibrated beginner review for {skill_name} to build confidence and core competency. {decision.reason}",
+                activity_type="VIDEO",
+                estimated_duration_mins=20,
                 difficulty="BEGINNER",
                 order_index=0,
                 weekly_plan_id=weekly_plan_id
@@ -451,6 +515,21 @@ def act(state: AgentState, db: Session) -> Dict[str, Any]:
         for act_item in pending_activities[:3]:
             if act_item.estimated_duration_mins and act_item.estimated_duration_mins > 15:
                 act_item.estimated_duration_mins = 15
+        if module:
+            warmup_title = "Quick Momentum: 10-Minute Warmup"
+            existing = db.query(LearningActivity).filter_by(module_id=module.id, title=warmup_title).first()
+            if not existing:
+                warmup_activity = LearningActivity(
+                    module_id=module.id,
+                    title=warmup_title,
+                    description=f"Bite-sized refresher designed to ease you back into learning after inactivity. {decision.reason}",
+                    activity_type="READING",
+                    estimated_duration_mins=10,
+                    difficulty="BEGINNER",
+                    order_index=0,
+                    weekly_plan_id=weekly_plan_id
+                )
+                db.add(warmup_activity)
         db.flush()
     return {}
 

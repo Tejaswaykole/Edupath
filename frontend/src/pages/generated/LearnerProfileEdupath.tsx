@@ -1,9 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { useUploadStore } from '../../store/uploadStore';
 
 export default function LearnerProfileEdupath() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
+  const { result: uploadResult } = useUploadStore();
+  
+  const readiness = uploadResult?.readinessScore 
+    ? Math.round(uploadResult.readinessScore * 100) 
+    : (uploadResult ? 95 : 70);
+  const initials = user?.name 
+    ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() 
+    : 'U';
+
 
   return (
     <div className="min-h-screen bg-surface">
@@ -47,13 +57,13 @@ export default function LearnerProfileEdupath() {
 <h2 className="font-headline-md text-headline-md text-on-surface font-bold">Profile Readiness</h2>
 </div>
 <div className="flex items-baseline gap-1">
-<span className="font-headline-xl text-headline-xl text-primary font-bold">82%</span>
+<span className="font-headline-xl text-headline-xl text-primary font-bold">{readiness}%</span>
 <span className="font-label-sm text-label-sm text-secondary">Complete</span>
 </div>
 </div>
 {/*  Custom high-contrast progress rail  */}
 <div className="w-full h-2.5 bg-surface-container-low rounded-full overflow-hidden mb-space-md">
-<div className="h-full bg-primary-container rounded-full transition-all duration-700 ease-out" ></div>
+<div className="h-full bg-primary-container rounded-full transition-all duration-700 ease-out" style={{ width: `${readiness}%` }}></div>
 </div>
 {/*  Checklist Grid  */}
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-space-sm pt-1">
@@ -63,7 +73,7 @@ export default function LearnerProfileEdupath() {
 </div>
 <div className="flex items-center gap-space-xs bg-surface-container-low/60 px-space-sm py-1.5 rounded-lg">
 <span className="material-symbols-outlined text-tertiary-container text-[18px]" >check_circle</span>
-<span className="font-label-sm text-label-sm text-on-surface truncate">4 Skills Logged</span>
+<span className="font-label-sm text-label-sm text-on-surface truncate">{uploadResult?.skills?.length ?? 4} Skills Logged</span>
 </div>
 <div className="flex items-center gap-space-xs bg-surface-container-low/60 px-space-sm py-1.5 rounded-lg">
 <span className="material-symbols-outlined text-tertiary-container text-[18px]" >check_circle</span>
@@ -73,17 +83,24 @@ export default function LearnerProfileEdupath() {
 <span className="material-symbols-outlined text-tertiary-container text-[18px]" >check_circle</span>
 <span className="font-label-sm text-label-sm text-on-surface truncate">Goal: 6 Months</span>
 </div>
-<div className="flex items-center gap-space-xs bg-amber-500/10 px-space-sm py-1.5 rounded-lg">
-<span className="material-symbols-outlined text-amber-600 text-[18px]">radio_button_unchecked</span>
-<span className="font-label-sm text-label-sm text-amber-900 font-semibold truncate">Resume Sync Pending</span>
-</div>
+{uploadResult ? (
+  <div className="flex items-center gap-space-xs bg-surface-container-low/60 px-space-sm py-1.5 rounded-lg">
+    <span className="material-symbols-outlined text-tertiary-container text-[18px]">check_circle</span>
+    <span className="font-label-sm text-label-sm text-on-surface truncate">Resume Synced</span>
+  </div>
+) : (
+  <div className="flex items-center gap-space-xs bg-amber-500/10 px-space-sm py-1.5 rounded-lg">
+    <span className="material-symbols-outlined text-amber-600 text-[18px]">radio_button_unchecked</span>
+    <span className="font-label-sm text-label-sm text-amber-900 font-semibold truncate">Resume Sync Pending</span>
+  </div>
+)}
 </div>
 </div>
 {/*  Right: Primary CTA card  */}
 <div className="flex flex-col sm:flex-row lg:flex-col items-stretch lg:items-end justify-center gap-space-xs lg:w-72 shrink-0 lg:pl-space-md">
-<button className="group flex items-center justify-center gap-space-xs px-space-md py-space-sm rounded-xl bg-primary-container hover:bg-primary text-on-primary transition-all font-label-md text-label-md shadow-md text-center" type="button">
+<button onClick={() => navigate('/documentcenterresumeupload')} className="group flex items-center justify-center gap-space-xs px-space-md py-space-sm rounded-xl bg-primary-container hover:bg-primary text-on-primary transition-all font-label-md text-label-md shadow-md text-center cursor-pointer" type="button">
 <span className="material-symbols-outlined text-[18px]">upload_file</span>
-<span>Upload Resume for 100%</span>
+<span>{uploadResult ? 'Update Resume' : 'Upload Resume for 100%'}</span>
 <span className="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
 </button>
 <span className="font-label-sm text-label-sm text-secondary text-center lg:text-right">Unlocks adaptive AI study plan tailoring</span>
@@ -115,7 +132,7 @@ export default function LearnerProfileEdupath() {
 <span className="material-symbols-outlined text-[22px]">code_blocks</span>
 </div>
 <div className="flex flex-col min-w-0">
-<span className="font-headline-sm text-headline-sm text-on-surface font-bold truncate">2 Projects</span>
+<span className="font-headline-sm text-headline-sm text-on-surface font-bold truncate">{uploadResult?.projects?.length ?? 2} Projects</span>
 <span className="font-label-sm text-label-sm text-secondary truncate">Verified Portfolio</span>
 </div>
 </div>
@@ -147,7 +164,9 @@ export default function LearnerProfileEdupath() {
 </div>
 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-space-lg p-space-md bg-surface-container-low/50 rounded-xl mb-space-md">
 <div className="relative shrink-0">
-<img alt="Tejas Patil" className="w-20 h-20 rounded-xl object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida/AEtjO1XydgpqPJIQ5eyUJCBDEYe6_xw8vIcX2_mKk3w8bNDievib2qQhUvJvmmryQ4STIulqFgNoPdGbXxjqdbdHPYOxP6Kk9IU5ZBYhyuRjCczhlDnq3XyHMzCWA2hEdd5KpZO7DpKluK0sYk5QUXlHvz4qG-RL7NthITwJ9fp4g_Uy6JxJwGm5xkj-YIoYx_H-bOr4TdyKt2sTIPT_yGExC7kkEDkI2iOdPpfTqc_zegTPaw"/>
+<div className="w-20 h-20 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary font-headline-lg text-headline-lg font-bold shadow-sm select-none">
+  {initials}
+</div>
 <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-tertiary-container ring-2 ring-surface-container-lowest flex items-center justify-center text-on-tertiary" title="Active Account">
 <span className="material-symbols-outlined text-[12px]">check</span>
 </span>
@@ -240,57 +259,57 @@ export default function LearnerProfileEdupath() {
 </button>
 </div>
 <div className="flex flex-col gap-space-md">
-{/*  Project 1  */}
-<div className="p-space-md rounded-xl bg-surface-container-low/40 hover:bg-surface-container-low transition-colors group">
-<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-xs">
-<div className="flex items-center gap-space-sm">
-<span className="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
-<span className="material-symbols-outlined text-[18px]">layers</span>
-</span>
-<h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">E-Commerce Microservices Platform</h3>
-</div>
-<span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold self-start sm:self-auto">Backend Lead</span>
-</div>
-<p className="font-body-sm text-body-sm text-secondary mb-space-sm pl-0 sm:pl-10">
-              Architected event-driven checkout services handling simulated concurrent traffic spikes, integrated Redis caching layers, and containerized deployment specs.
-            </p>
-<div className="flex items-center justify-between flex-wrap gap-space-sm pl-0 sm:pl-10">
-<div className="flex items-center gap-1.5 flex-wrap">
-<span className="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-secondary font-medium">Node.js</span>
-<span className="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-secondary font-medium">Express</span>
-<span className="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-secondary font-medium">MongoDB</span>
-<span className="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-secondary font-medium">Docker</span>
-</div>
-<a className="text-primary hover:underline font-label-sm text-label-sm inline-flex items-center gap-1" href="#">
-                View Repository <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-</a>
-</div>
-</div>
-{/*  Project 2  */}
-<div className="p-space-md rounded-xl bg-surface-container-low/40 hover:bg-surface-container-low transition-colors group">
-<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-xs">
-<div className="flex items-center gap-space-sm">
-<span className="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
-<span className="material-symbols-outlined text-[18px]">view_kanban</span>
-</span>
-<h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">TaskFlow Kanban App</h3>
-</div>
-<span className="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold self-start sm:self-auto">Full Stack</span>
-</div>
-<p className="font-body-sm text-body-sm text-secondary mb-space-sm pl-0 sm:pl-10">
-              Real-time collaboration board with responsive drag-and-drop mechanics, optimistic UI synchronization, and granular Firebase security rules.
-            </p>
-<div className="flex items-center justify-between flex-wrap gap-space-sm pl-0 sm:pl-10">
-<div className="flex items-center gap-1.5 flex-wrap">
-<span className="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-secondary font-medium">React</span>
-<span className="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-secondary font-medium">Tailwind CSS</span>
-<span className="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-secondary font-medium">Firebase</span>
-</div>
-<a className="text-primary hover:underline font-label-sm text-label-sm inline-flex items-center gap-1" href="#">
-                View Live Demo <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-</a>
-</div>
-</div>
+{uploadResult?.projects && uploadResult.projects.length > 0 ? (
+  uploadResult.projects.map((proj: any, idx: number) => (
+    <div key={idx} className="p-space-md rounded-xl bg-surface-container-low/40 hover:bg-surface-container-low transition-colors group">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-xs">
+        <div className="flex items-center gap-space-sm">
+          <span className="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+            <span className="material-symbols-outlined text-[18px]">layers</span>
+          </span>
+          <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">{proj.name || proj.title}</h3>
+        </div>
+        {proj.role && <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold self-start sm:self-auto">{proj.role}</span>}
+      </div>
+      <p className="font-body-sm text-body-sm text-secondary mb-space-sm pl-0 sm:pl-10">
+        {proj.description || 'Verified project from candidate profile documentation.'}
+      </p>
+      {proj.technologies && proj.technologies.length > 0 && (
+        <div className="flex items-center gap-1.5 flex-wrap pl-0 sm:pl-10">
+          {proj.technologies.map((tech: string, tidx: number) => (
+            <span key={tidx} className="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-secondary font-medium">{tech}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  ))
+) : (
+  <>
+    {/*  Project 1  */}
+    <div className="p-space-md rounded-xl bg-surface-container-low/40 hover:bg-surface-container-low transition-colors group">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-xs">
+        <div className="flex items-center gap-space-sm">
+          <span className="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+            <span className="material-symbols-outlined text-[18px]">layers</span>
+          </span>
+          <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">Full Stack Cloud Application</h3>
+        </div>
+        <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold self-start sm:self-auto">Full Stack</span>
+      </div>
+      <p className="font-body-sm text-body-sm text-secondary mb-space-sm pl-0 sm:pl-10">
+        Architected modern microservices stack with asynchronous background queues, PostgreSQL database optimizations, and containerized Docker pipelines.
+      </p>
+      <div className="flex items-center justify-between flex-wrap gap-space-sm pl-0 sm:pl-10">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-secondary font-medium">Node.js</span>
+          <span className="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-secondary font-medium">React</span>
+          <span className="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-secondary font-medium">PostgreSQL</span>
+          <span className="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-secondary font-medium">Docker</span>
+        </div>
+      </div>
+    </div>
+  </>
+)}
 </div>
 </section>
 </div>
@@ -386,7 +405,7 @@ export default function LearnerProfileEdupath() {
           Synchronize your latest CV or LinkedIn export for automatic skill mapping.
         </p>
 {/*  Drop area box  */}
-<div className="border-2 border-dashed border-outline-variant/60 hover:border-primary/60 transition-colors rounded-xl p-space-lg text-center bg-surface-container-low/20 flex flex-col items-center justify-center cursor-pointer group">
+<div onClick={() => navigate('/documentcenterresumeupload')} className="border-2 border-dashed border-outline-variant/60 hover:border-primary/60 transition-colors rounded-xl p-space-lg text-center bg-surface-container-low/20 flex flex-col items-center justify-center cursor-pointer group">
 <div className="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform mb-2">
 <span className="material-symbols-outlined text-[24px]">cloud_upload</span>
 </div>
@@ -398,7 +417,7 @@ export default function LearnerProfileEdupath() {
 <span className="material-symbols-outlined text-[16px] text-tertiary-container">lock</span>
             Encrypted &amp; private
           </span>
-<span>Last parsed: None</span>
+<span>Last parsed: <strong className="text-on-surface">{uploadResult?.fileName || 'None'}</strong></span>
 </div>
 </section>
 {/*  Study Plan Recalibration Assistant Box  */}
