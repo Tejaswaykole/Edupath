@@ -1,4 +1,5 @@
 [
+  "tests/test_agent.py::test_agent_evaluate",
   "tests/test_auth.py::test_get_me",
   "tests/test_auth.py::test_get_own_profile_authorized",
   "tests/test_auth.py::test_login_invalid",

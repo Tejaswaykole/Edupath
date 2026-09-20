@@ -5,6 +5,9 @@ from app.schemas.ai import AISkillGapAnalysis, AILearningPathResult, AIPracticeE
 
 client = Groq(api_key=settings.GROQ_API_KEY)
 
+def get_groq_client():
+    return client
+
 def analyze_skill_gap(skill_name: str, target_role_title: str) -> AISkillGapAnalysis:
     if settings.GROQ_API_KEY == "dummy_key_if_not_set" or not settings.GROQ_API_KEY:
         return AISkillGapAnalysis(

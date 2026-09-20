@@ -1,5 +1,8 @@
+import React from 'react';
+import { useAgentActivity } from '../../hooks/useAgent';
 
 export default function AgentActivityCenterAiCompanionEdupath() {
+  const { data: agentEvents, isLoading, isError } = useAgentActivity();
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -61,155 +64,40 @@ export default function AgentActivityCenterAiCompanionEdupath() {
 </div>
 {/*  Feed Timeline Stream (OBSERVE -> DETECT -> ACT -> ADAPT paradigm)  */}
 <div className="flex flex-col gap-4">
-{/*  TIMELINE ITEM 1: STRUGGLE_DETECTED & DIFFICULTY_ADJUSTED  */}
-<article className="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col gap-4 relative overflow-hidden">
+{isLoading && <p className="text-secondary text-sm">Loading agent telemetry...</p>}
+{isError && <p className="text-error text-sm">Failed to load agent telemetry.</p>}
+{agentEvents && agentEvents.length === 0 && <p className="text-secondary text-sm">No agent activity recorded yet.</p>}
+{agentEvents && agentEvents.map((event: any) => (
+<article key={event.id} className="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col gap-4 relative overflow-hidden">
 <div className="absolute top-0 left-0 bottom-0 w-1 bg-primary-container"></div>
 <div className="flex items-start justify-between gap-3">
 <div className="flex items-center gap-2.5">
-<div className="w-8 h-8 rounded-lg bg-error-container/40 flex items-center justify-center text-error">
-<span className="material-symbols-outlined text-[18px]">emergency_home</span>
+<div className="w-8 h-8 rounded-lg bg-primary-container/40 flex items-center justify-center text-primary">
+<span className="material-symbols-outlined text-[18px]">memory</span>
 </div>
 <div className="flex flex-col">
 <div className="flex items-center gap-2">
-<span className="font-headline-sm text-headline-sm text-on-surface">STRUGGLE_DETECTED &amp; DIFFICULTY_ADJUSTED</span>
+<span className="font-headline-sm text-headline-sm text-on-surface">{event.event_type}</span>
 </div>
-<span className="font-label-sm text-label-sm text-secondary">Today, 10:45 AM • Engine v4.8 Telemetry Hook</span>
+<span className="font-label-sm text-label-sm text-secondary">{new Date(event.occurred_at).toLocaleString()} • AI Engine</span>
 </div>
 </div>
-<span className="px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold tracking-wide">
-              Intervention Active • High Priority
+<span className="px-2.5 py-1 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold tracking-wide">
+              {event.event_data?.action}
             </span>
 </div>
 {/*  Observation & Detection Box  */}
 <div className="bg-surface-container-low rounded-lg p-3.5 flex flex-col gap-2">
 <div className="flex items-center gap-2 text-on-surface font-label-md text-label-md">
 <span className="material-symbols-outlined text-[16px] text-primary-container">visibility</span>
-<span className="font-bold">Observation &amp; Pattern Recognition</span>
+<span className="font-bold">Intervention Reasoning</span>
 </div>
 <p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-              Sub-concept friction detected in <strong className="text-on-surface font-semibold">Stateless JWT Revocation &amp; Redis Blacklist</strong> during Checkpoint 04. Measured benchmark accuracy dropped to <span className="text-error font-bold">58%</span> against expected target baseline of <span className="text-on-surface font-bold">85%</span>. 3 execution timeouts recorded on mock token store.
+              {event.description}
             </p>
 </div>
-{/*  Structured Action Taken Grid  */}
-<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-<div className="bg-surface-container-lowest p-3 rounded-lg flex flex-col gap-1">
-<span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Automated Action Taken</span>
-<p className="font-body-sm text-body-sm text-on-surface">
-                Inserted 45-min foundational drill (HTTP Auth Fundamentals) and downgraded Lab #ND-504 difficulty to Intermediate Guided. Distributed Capstone moved to Saturday.
-              </p>
-</div>
-<div className="bg-surface-container-lowest p-3 rounded-lg flex flex-col gap-1">
-<span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Cognitive Workload Guard</span>
-<div className="flex items-center justify-between mt-1">
-<span className="font-headline-sm text-headline-sm text-primary font-bold">7.3 hrs/wk</span>
-<span className="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container text-secondary">Reduced from 9.2 hrs</span>
-</div>
-<p className="font-body-sm text-body-sm text-secondary">Preempted cognitive overload threshold.</p>
-</div>
-</div>
-{/*  Action Bar CTAs  */}
-<div className="flex items-center justify-between pt-1">
-<div className="flex items-center gap-2">
-<button className="px-3.5 py-1.5 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-semibold hover:bg-primary transition-colors inline-flex items-center gap-1.5">
-<span>Review Adjusted Schedule</span>
-<span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-</button>
-<button className="px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface font-label-md text-label-md font-semibold hover:bg-surface-container transition-colors">
-                Inspect Lab #ND-504
-              </button>
-</div>
-<span className="font-label-sm text-label-sm text-secondary hidden sm:inline">Telemetry ID: #TEL-88392-A</span>
-</div>
 </article>
-{/*  TIMELINE ITEM 2: MENTOR_RECOMMENDED  */}
-<article className="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col gap-4 relative overflow-hidden">
-<div className="absolute top-0 left-0 bottom-0 w-1 bg-secondary"></div>
-<div className="flex items-start justify-between gap-3">
-<div className="flex items-center gap-2.5">
-<div className="w-8 h-8 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-fixed-variant">
-<span className="material-symbols-outlined text-[18px]">person_search</span>
-</div>
-<div className="flex flex-col">
-<span className="font-headline-sm text-headline-sm text-on-surface">MENTOR_RECOMMENDED</span>
-<span className="font-label-sm text-label-sm text-secondary">Today, 10:48 AM • Automated Matching Engine</span>
-</div>
-</div>
-<span className="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold tracking-wide">
-              Guidance Escalation
-            </span>
-</div>
-<p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-            Recommended 1:1 architectural consultation with <strong className="text-on-surface font-semibold">Rahul Sharma (Staff Backend Engineer @ Stripe)</strong> for advanced multi-tenant session caching patterns. A context payload has been compiled under zero-spill privacy protocols (only Level 3 milestones and code diff are accessible).
-          </p>
-{/*  Embedded Mentor Briefing Card  */}
-<div className="flex items-center justify-between p-3 rounded-lg bg-surface-container-low">
-<div className="flex items-center gap-3">
-<img className="w-10 h-10 rounded-full object-cover" data-alt="Professional studio portrait of Rahul Sharma, an Indian male senior software architect in smart casual navy blazer with modern studio lighting and soft indigo ambient accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHaSrNEYrIFurM9FyP8B-l01Zbj6-4eJ_P5JwsD-7eP_4nNJNoj2FzI75eHhfGvvIxuOTrO5a7Dlx-_4rO0hu4VHIbETy2rNcGiNMv781T3MsiddRU2wANVHQoP6jUes8kK0FN71zBkopZj8eKBSC-a6V3PSZVojeie8VCdME8w4SC_Nt-uyDf2ZWWDQWMsQfEP8LNZRc72Ne3E90Xbrl18q4hnGtTAoyMihZI_FS7"/>
-<div className="flex flex-col">
-<span className="font-label-md text-label-md text-on-surface font-bold">Rahul Sharma</span>
-<span className="font-body-sm text-body-sm text-secondary">Staff Backend Engineer • 4 Slots Available This Week</span>
-</div>
-</div>
-<div className="flex items-center gap-2">
-<button className="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface font-label-sm text-label-sm font-bold shadow-sm hover:bg-surface-container transition-colors">
-                Dismiss
-              </button>
-<button className="px-3 py-1.5 rounded-lg bg-primary-container text-on-primary font-label-sm text-label-sm font-bold hover:bg-primary transition-colors">
-                View Mentor Match
-              </button>
-</div>
-</div>
-</article>
-{/*  TIMELINE ITEM 3: PREREQUISITE_DETECTED  */}
-<article className="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col gap-3 relative overflow-hidden">
-<div className="absolute top-0 left-0 bottom-0 w-1 bg-tertiary"></div>
-<div className="flex items-start justify-between gap-3">
-<div className="flex items-center gap-2.5">
-<div className="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-tertiary">
-<span className="material-symbols-outlined text-[18px]">verified</span>
-</div>
-<div className="flex flex-col">
-<span className="font-headline-sm text-headline-sm text-on-surface">PREREQUISITE_DETECTED</span>
-<span className="font-label-sm text-label-sm text-secondary">Yesterday, 4:15 PM • Automated Skill Verification</span>
-</div>
-</div>
-<span className="px-2.5 py-1 rounded-full bg-surface-container text-tertiary font-label-sm text-label-sm font-semibold">
-              Curriculum Scaffold
-            </span>
-</div>
-<p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-            Express 5 error middleware mastery confirmed at <strong className="text-on-surface font-semibold">85% composite competence</strong>. Agent unlocked asynchronous route handlers and PostgreSQL connection pooling ahead of schedule.
-          </p>
-<div className="flex items-center gap-4 text-secondary font-label-sm text-label-sm pt-1">
-<span className="inline-flex items-center gap-1">
-<span className="material-symbols-outlined text-[15px] text-tertiary">check_circle</span> Node Core 18+ Passed
-            </span>
-<span className="inline-flex items-center gap-1">
-<span className="material-symbols-outlined text-[15px] text-tertiary">check_circle</span> Async Loop Mechanics (100%)
-            </span>
-</div>
-</article>
-{/*  TIMELINE ITEM 4: OVERLOAD_DETECTED & RESOLVED  */}
-<article className="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col gap-3 relative overflow-hidden">
-<div className="absolute top-0 left-0 bottom-0 w-1 bg-secondary-container"></div>
-<div className="flex items-start justify-between gap-3">
-<div className="flex items-center gap-2.5">
-<div className="w-8 h-8 rounded-lg bg-secondary-container/60 flex items-center justify-center text-on-secondary-container">
-<span className="material-symbols-outlined text-[18px]">bedtime</span>
-</div>
-<div className="flex flex-col">
-<span className="font-headline-sm text-headline-sm text-on-surface">OVERLOAD_DETECTED &amp; RESOLVED</span>
-<span className="font-label-sm text-label-sm text-secondary">3 days ago • Well-being Telemetry Guard</span>
-</div>
-</div>
-<span className="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
-              Burnout Protection
-            </span>
-</div>
-<p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-            Detected 3+ hours uninterrupted terminal execution and test failure iterations. Enforced Focus Mode quiet hours, suspended scheduled notifications, and redistributed Thursday's sprint across Friday morning.
-          </p>
-</article>
+))}
 </div>
 </div>
 {/*  RIGHT COLUMN: Context-Aware EduPath Learning Companion (5 cols ≈ 41.7%)  */}
