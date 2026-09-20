@@ -57,8 +57,8 @@ export default function LearnerRegistrationEdupath() {
 {/*  Top Brand Header  */}
 <div className="flex flex-col items-center text-center mb-7">
 <div className="flex items-center gap-2.5 mb-3">
-<img alt="EduPath Logo Mark" className="w-9 h-9 object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UW82HvmiPy5TMo7cU3gRwBiU3baDfcaiEOnyNASWlxwTVH0w0qIkNHoitLzMolXacL-2tGekbbOW8xuiE-cFOTqz3XSg6tMXidYpz4GWTD9ElmxSIusWHfPloyzQX4ShPK6uAbsckWXk0QAmTGvpHPR8UpvJbzypQPbEy08-huoIQrDNTtxARo_QwXykp2DRz9wjaWKAk9oBlNnhorpC0KbV5ertGX9YPXANETHdtirg"/>
-<span className="font-headline-md text-headline-md tracking-tight text-on-surface">EduPath</span>
+<img alt="EduPath Logo" className="w-10 h-10 object-contain rounded-lg shadow-sm" src="/logo.png"/>
+<span className="font-headline-md text-headline-md tracking-tight text-on-surface font-bold">EduPath</span>
 </div>
 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-low text-primary mb-3">
 <span className="w-1.5 h-1.5 rounded-full bg-primary-container"></span>

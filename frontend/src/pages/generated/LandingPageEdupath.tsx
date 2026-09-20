@@ -10,13 +10,13 @@ export default function LandingPageEdupath() {
 <header className="w-full bg-surface-container-lowest sticky top-0 z-40 shadow-sm">
 <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
 <div className="flex items-center space-x-3">
-<img alt="EduPath Logo Mark" className="w-9 h-9 object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UW82HvmiPy5TMo7cU3gRwBiU3baDfcaiEOnyNASWlxwTVH0w0qIkNHoitLzMolXacL-2tGekbbOW8xuiE-cFOTqz3XSg6tMXidYpz4GWTD9ElmxSIusWHfPloyzQX4ShPK6uAbsckWXk0QAmTGvpHPR8UpvJbzypQPbEy08-huoIQrDNTtxARo_QwXykp2DRz9wjaWKAk9oBlNnhorpC0KbV5ertGX9YPXANETHdtirg"/>
+<img alt="EduPath Logo" className="w-10 h-10 object-contain rounded-lg shadow-sm" src="/logo.png"/>
 <div className="flex flex-col">
 <div className="flex items-center space-x-1.5">
-<span className="font-headline-md text-headline-md text-on-surface tracking-tight">EduPath</span>
+<span className="font-headline-md text-headline-md text-on-surface tracking-tight font-bold">EduPath</span>
 <span className="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
 </div>
-<span className="font-label-sm text-label-sm text-secondary tracking-normal -mt-0.5">Learn. Grow. Belong.</span>
+<span className="font-label-sm text-label-sm text-secondary tracking-normal -mt-0.5">LEARN • GROW • GO FURTHER</span>
 </div>
 </div>
 <nav className="hidden md:flex items-center space-x-8">
@@ -470,7 +470,7 @@ export default function LandingPageEdupath() {
 <footer className="w-full bg-surface-container-lowest py-12 px-6 shadow-sm">
 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
 <div className="flex items-center space-x-3">
-<img alt="EduPath Logo Mark" className="w-7 h-7 object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UW82HvmiPy5TMo7cU3gRwBiU3baDfcaiEOnyNASWlxwTVH0w0qIkNHoitLzMolXacL-2tGekbbOW8xuiE-cFOTqz3XSg6tMXidYpz4GWTD9ElmxSIusWHfPloyzQX4ShPK6uAbsckWXk0QAmTGvpHPR8UpvJbzypQPbEy08-huoIQrDNTtxARo_QwXykp2DRz9wjaWKAk9oBlNnhorpC0KbV5ertGX9YPXANETHdtirg"/>
+<img alt="EduPath Logo" className="w-8 h-8 object-contain rounded-md" src="/logo.png"/>
 <span className="font-headline-sm text-headline-sm text-on-surface font-bold">EduPath</span>
 <span className="text-secondary font-label-sm text-label-sm">© 2025 EduPath Systems, Inc. All rights reserved.</span>
 </div>

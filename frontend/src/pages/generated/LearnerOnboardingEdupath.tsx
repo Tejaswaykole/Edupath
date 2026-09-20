@@ -57,7 +57,7 @@ export default function LearnerOnboardingEdupath() {
 <div className="w-full max-w-[760px] flex flex-col items-center mb-6">
 <div className="w-full flex items-center justify-between pb-5 border-b border-surface-container">
 <div className="flex items-center gap-3">
-<img alt="EduPath" className="w-9 h-9 object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UW82HvmiPy5TMo7cU3gRwBiU3baDfcaiEOnyNASWlxwTVH0w0qIkNHoitLzMolXacL-2tGekbbOW8xuiE-cFOTqz3XSg6tMXidYpz4GWTD9ElmxSIusWHfPloyzQX4ShPK6uAbsckWXk0QAmTGvpHPR8UpvJbzypQPbEy08-huoIQrDNTtxARo_QwXykp2DRz9wjaWKAk9oBlNnhorpC0KbV5ertGX9YPXANETHdtirg"/>
+<img alt="EduPath" className="w-10 h-10 object-contain rounded-lg shadow-sm" src="/logo.png"/>
 <div className="flex flex-col">
 <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight">EduPath</span>
 <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">Diagnostic Setup Engine</span>

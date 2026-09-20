@@ -36,8 +36,8 @@ export default function LearnerLoginEdupath() {
 {/*  Brand Header  */}
 <div className="flex flex-col items-center text-center w-full">
 <div className="flex items-center gap-3 mb-5">
-<img alt="EduPath Logo Mark" className="w-10 h-10 object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UW82HvmiPy5TMo7cU3gRwBiU3baDfcaiEOnyNASWlxwTVH0w0qIkNHoitLzMolXacL-2tGekbbOW8xuiE-cFOTqz3XSg6tMXidYpz4GWTD9ElmxSIusWHfPloyzQX4ShPK6uAbsckWXk0QAmTGvpHPR8UpvJbzypQPbEy08-huoIQrDNTtxARo_QwXykp2DRz9wjaWKAk9oBlNnhorpC0KbV5ertGX9YPXANETHdtirg"/>
-<span className="font-headline-lg text-headline-lg text-on-surface tracking-tight">EduPath</span>
+<img alt="EduPath Logo" className="w-11 h-11 object-contain rounded-lg shadow-sm" src="/logo.png"/>
+<span className="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">EduPath</span>
 </div>
 <h1 className="font-headline-xl text-headline-xl text-on-surface mb-2">Welcome back</h1>
 <p className="font-body-md text-body-md text-on-surface-variant max-w-[360px]">
