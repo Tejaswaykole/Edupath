@@ -1,5 +1,6 @@
 [
   "tests/test_agent.py::test_agent_evaluate",
+  "tests/test_assistant.py::test_assistant_chat",
   "tests/test_auth.py::test_get_me",
   "tests/test_auth.py::test_get_own_profile_authorized",
   "tests/test_auth.py::test_login_invalid",
@@ -9,6 +10,7 @@
   "tests/test_auth.py::test_register_learner",
   "tests/test_learning.py::test_analyze_skill_gaps",
   "tests/test_learning.py::test_generate_learning_path_fails_without_gaps",
+  "tests/test_mentorship.py::test_mentorship_flow",
   "tests/test_workspace.py::test_practice_submission",
   "tests/test_workspace.py::test_progress_update"
 ]

@@ -53,3 +53,38 @@ class MentorshipRequest(Base):
 
     learner: Mapped["LearnerProfile"] = relationship()
     mentor: Mapped["MentorProfile"] = relationship()
+
+class ActiveMentorship(Base):
+    __tablename__ = "active_mentorships"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    request_id: Mapped[int] = mapped_column(ForeignKey("mentorship_requests.id", ondelete="CASCADE"), unique=True, index=True, nullable=False)
+    learner_id: Mapped[int] = mapped_column(ForeignKey("learner_profiles.id", ondelete="CASCADE"), index=True, nullable=False)
+    mentor_id: Mapped[int] = mapped_column(ForeignKey("mentor_profiles.id", ondelete="CASCADE"), index=True, nullable=False)
+    
+    status: Mapped[str] = mapped_column(String(50), default="ACTIVE") # ACTIVE, COMPLETED, ENDED
+    goals: Mapped[str] = mapped_column(Text, nullable=True)
+    
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    request: Mapped["MentorshipRequest"] = relationship()
+    learner: Mapped["LearnerProfile"] = relationship()
+    mentor: Mapped["MentorProfile"] = relationship()
+
+class MentorGuidance(Base):
+    __tablename__ = "mentor_guidance"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    mentorship_id: Mapped[int] = mapped_column(ForeignKey("active_mentorships.id", ondelete="CASCADE"), index=True, nullable=False)
+    
+    title: Mapped[str] = mapped_column(String(255), nullable=True)
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    
+    related_skill_id: Mapped[int] = mapped_column(ForeignKey("skills.id", ondelete="SET NULL"), nullable=True)
+    is_read: Mapped[bool] = mapped_column(default=False)
+    
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    mentorship: Mapped["ActiveMentorship"] = relationship()
+    related_skill: Mapped["Skill"] = relationship()

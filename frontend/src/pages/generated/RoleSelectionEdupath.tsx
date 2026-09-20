@@ -200,6 +200,8 @@ export default function RoleSelectionEdupath() {
 </div>
 </footer>
     </div>
+  </div>
+</main>
 </div>
   );
 }

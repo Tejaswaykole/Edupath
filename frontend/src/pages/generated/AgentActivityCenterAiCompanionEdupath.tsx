@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAgentActivity } from '../../hooks/useAgent';
-
+import { useAssistant } from '../../hooks/useAssistant';
 export default function AgentActivityCenterAiCompanionEdupath() {
   const { data: agentEvents, isLoading, isError } = useAgentActivity();
+  const { conversations, messages, sendMessage, isSending } = useAssistant(
+    conversations && conversations.length > 0 ? conversations[0].id : undefined
+  );
+  
+  const [inputText, setInputText] = useState("");
+
+  const handleSend = () => {
+    if (!inputText.trim()) return;
+    sendMessage({ content: inputText });
+    setInputText("");
+  };
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -144,72 +155,66 @@ export default function AgentActivityCenterAiCompanionEdupath() {
 {/*  System Timestamp Note  */}
 <div className="flex justify-center">
 <span className="font-label-sm text-label-sm text-secondary bg-surface-container px-3 py-0.5 rounded-full">
-              Synced with Lab Checkpoint #04 Telemetry
+              Synced with Live Telemetry
             </span>
 </div>
-{/*  User Message Bubble  */}
-<div className="flex items-start justify-end gap-2.5 max-w-[88%] self-end">
-<div className="bg-primary-container text-on-primary p-3.5 rounded-2xl rounded-tr-none shadow-sm flex flex-col gap-1">
-<p className="font-body-md text-body-md">Why was my capstone moved to Saturday?</p>
-<span className="font-label-sm text-label-sm text-on-primary/70 self-end">10:49 AM</span>
-</div>
-</div>
-{/*  Companion AI Response  */}
-<div className="flex items-start gap-2.5 max-w-[92%] self-start">
-<div className="w-7 h-7 rounded-lg bg-primary-container text-white flex items-center justify-center shrink-0 mt-1 shadow-sm">
-<span className="material-symbols-outlined text-[15px]">neurology</span>
-</div>
-<div className="bg-surface-container-lowest text-on-surface p-4 rounded-2xl rounded-tl-none shadow-sm flex flex-col gap-3">
-<p className="font-body-sm text-body-sm text-on-surface leading-relaxed">
-                Based on <strong className="font-semibold text-primary">Checkpoint 04</strong>, your theoretical understanding of token structures is solid (<span className="text-tertiary font-bold">100%</span>), but runtime Redis mock testing showed race conditions in middleware revocation routines.
-              </p>
-<div className="p-2.5 rounded-lg bg-surface-container-low flex flex-col gap-1.5">
-<span className="font-label-sm text-label-sm uppercase text-secondary font-bold">Intervention Rationale</span>
-<p className="font-body-sm text-body-sm text-on-surface-variant">
-                  We slotted a 45-minute guided drill on <strong>Redis SETEX with key expiration events</strong> first so you tackle the full capstone with complete runtime confidence. Your targeted career milestone remains on track for <strong>April 18</strong>.
-                </p>
-</div>
-{/*  Quick Embedded Actions for Learner  */}
-<div className="flex flex-wrap gap-2 pt-1">
-<button className="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold transition-colors inline-flex items-center gap-1">
-<span className="material-symbols-outlined text-[14px]">terminal</span>
-                  Open Redis Mock Lab
-                </button>
-<button className="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high text-secondary hover:text-on-surface font-label-sm text-label-sm font-semibold transition-colors inline-flex items-center gap-1">
-<span className="material-symbols-outlined text-[14px]">menu_book</span>
-                  View RFC 7519 Notes
-                </button>
-</div>
-<div className="flex items-center justify-between text-secondary pt-1">
-<span className="font-label-sm text-label-sm">EduPath Adaptive Engine • 10:49 AM</span>
-<div className="flex items-center gap-1.5">
-<button aria-label="Helpful response" className="p-1 hover:text-on-surface">
-<span className="material-symbols-outlined text-[16px]">thumb_up</span>
-</button>
-<button aria-label="Unhelpful response" className="p-1 hover:text-on-surface">
-<span className="material-symbols-outlined text-[16px]">thumb_down</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-{/*  Companion Diagnostic Code Preview Helper  */}
-<div className="flex items-start gap-2.5 max-w-[92%] self-start">
-<div className="w-7 h-7 rounded-lg bg-primary-container text-white flex items-center justify-center shrink-0 mt-1 shadow-sm">
-<span className="material-symbols-outlined text-[15px]">neurology</span>
-</div>
-<div className="bg-surface-container-lowest text-on-surface p-3.5 rounded-2xl rounded-tl-none shadow-sm flex flex-col gap-2 w-full">
-<span className="font-label-sm text-label-sm text-secondary font-semibold">Recommended Fix Pattern</span>
-<div className="bg-inverse-surface text-inverse-on-surface p-3 rounded-lg font-mono text-[12px] leading-snug overflow-x-auto">
-<span className="text-tertiary-fixed">// Atomic Token Invalidation</span><br/>
-<span className="text-inverse-primary">await</span> redisClient.<span className="text-primary-fixed">setEx</span>(<br/>
-                  <span className="text-tertiary-fixed">`bl_$&#123;token&#125;`</span>,<br/>
-                  remainingTtlSeconds,<br/>
-                  <span className="text-tertiary-fixed">'revoked'</span><br/>
-                );
-              </div>
-</div>
-</div>
+
+{messages?.map((msg) => (
+  msg.sender_type === 'USER' ? (
+    <div key={msg.id} className="flex items-start justify-end gap-2.5 max-w-[88%] self-end">
+    <div className="bg-primary-container text-on-primary p-3.5 rounded-2xl rounded-tr-none shadow-sm flex flex-col gap-1">
+    <p className="font-body-md text-body-md">{msg.content}</p>
+    <span className="font-label-sm text-label-sm text-on-primary/70 self-end">
+      {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+    </span>
+    </div>
+    </div>
+  ) : (
+    <div key={msg.id} className="flex items-start gap-2.5 max-w-[92%] self-start">
+    <div className="w-7 h-7 rounded-lg bg-primary-container text-white flex items-center justify-center shrink-0 mt-1 shadow-sm">
+    <span className="material-symbols-outlined text-[15px]">neurology</span>
+    </div>
+    <div className="bg-surface-container-lowest text-on-surface p-4 rounded-2xl rounded-tl-none shadow-sm flex flex-col gap-3">
+    <p className="font-body-sm text-body-sm text-on-surface leading-relaxed">
+      {msg.content}
+    </p>
+    {msg.response_metadata?.recommended_actions && msg.response_metadata.recommended_actions.length > 0 && (
+      <div className="p-2.5 rounded-lg bg-surface-container-low flex flex-col gap-1.5">
+      <span className="font-label-sm text-label-sm uppercase text-secondary font-bold">Recommended Actions</span>
+      <ul className="list-disc pl-4 font-body-sm text-body-sm text-on-surface-variant">
+        {msg.response_metadata.recommended_actions.map((action: string, i: number) => (
+          <li key={i}>{action}</li>
+        ))}
+      </ul>
+      </div>
+    )}
+    <div className="flex items-center justify-between text-secondary pt-1">
+    <span className="font-label-sm text-label-sm">EduPath Adaptive Engine • {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+    <div className="flex items-center gap-1.5">
+    <button aria-label="Helpful response" className="p-1 hover:text-on-surface">
+    <span className="material-symbols-outlined text-[16px]">thumb_up</span>
+    </button>
+    <button aria-label="Unhelpful response" className="p-1 hover:text-on-surface">
+    <span className="material-symbols-outlined text-[16px]">thumb_down</span>
+    </button>
+    </div>
+    </div>
+    </div>
+    </div>
+  )
+))}
+{isSending && (
+  <div className="flex items-start gap-2.5 max-w-[92%] self-start">
+    <div className="w-7 h-7 rounded-lg bg-primary-container text-white flex items-center justify-center shrink-0 mt-1 shadow-sm">
+    <span className="material-symbols-outlined text-[15px]">neurology</span>
+    </div>
+    <div className="bg-surface-container-lowest text-on-surface p-4 rounded-2xl rounded-tl-none shadow-sm flex flex-col gap-3">
+      <p className="font-body-sm text-body-sm text-on-surface leading-relaxed animate-pulse">
+        Thinking...
+      </p>
+    </div>
+  </div>
+)}
 </div>
 {/*  Chat Input & Privacy Footer  */}
 <div className="p-3 bg-surface-container-lowest flex flex-col gap-2">
@@ -217,11 +222,11 @@ export default function AgentActivityCenterAiCompanionEdupath() {
 <button aria-label="Attach code or logs" className="p-2 text-secondary hover:text-on-surface rounded-lg transition-colors">
 <span className="material-symbols-outlined text-[20px]">attach_file</span>
 </button>
-<input className="flex-1 bg-transparent border-none px-2 text-on-surface placeholder:text-secondary font-body-sm text-body-sm focus:outline-none focus:ring-0" placeholder="Ask anything about today's modules, exercises, or schedule..." type="text"/>
+<input className="flex-1 bg-transparent border-none px-2 text-on-surface placeholder:text-secondary font-body-sm text-body-sm focus:outline-none focus:ring-0" placeholder="Ask anything about today's modules, exercises, or schedule..." type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()} disabled={isSending}/>
 <button aria-label="Insert code snippet" className="p-2 text-secondary hover:text-on-surface rounded-lg transition-colors">
 <span className="material-symbols-outlined text-[20px]">code</span>
 </button>
-<button aria-label="Send query" className="w-9 h-9 rounded-lg bg-primary-container hover:bg-primary text-white flex items-center justify-center shadow-sm transition-colors ml-1">
+<button aria-label="Send query" onClick={handleSend} disabled={isSending} className="w-9 h-9 rounded-lg bg-primary-container hover:bg-primary text-white flex items-center justify-center shadow-sm transition-colors ml-1">
 <span className="material-symbols-outlined text-[18px]">send</span>
 </button>
 </div>
