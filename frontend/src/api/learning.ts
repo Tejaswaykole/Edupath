@@ -31,3 +31,9 @@ export const generateLearningPath = async () => {
   const response = await api.post('/learning-paths/generate');
   return response.data;
 };
+
+export const verifySkill = async (skillId: number) => {
+  const response = await api.post(`/skill-gaps/verify/${skillId}`);
+  return response.data;
+};
+

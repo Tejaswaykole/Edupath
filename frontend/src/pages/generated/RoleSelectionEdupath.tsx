@@ -26,11 +26,11 @@ export default function RoleSelectionEdupath() {
 <header className="relative z-10 flex flex-col items-center justify-center text-center max-w-xl mx-auto space-y-3">
 <div className="inline-flex items-center gap-3 group cursor-default">
 <div className="w-11 h-11 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-center p-2 transition-transform duration-300 group-hover:scale-105">
-<img alt="EduPath Brand Mark" className="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UW82HvmiPy5TMo7cU3gRwBiU3baDfcaiEOnyNASWlxwTVH0w0qIkNHoitLzMolXacL-2tGekbbOW8xuiE-cFOTqz3XSg6tMXidYpz4GWTD9ElmxSIusWHfPloyzQX4ShPK6uAbsckWXk0QAmTGvpHPR8UpvJbzypQPbEy08-huoIQrDNTtxARo_QwXykp2DRz9wjaWKAk9oBlNnhorpC0KbV5ertGX9YPXANETHdtirg"/>
+<img alt="EduPath Logo" className="w-full h-full object-contain rounded-lg" src="/logo.png"/>
 </div>
 <div className="flex flex-col text-left">
 <span className="font-headline-md text-headline-md tracking-tight text-on-surface font-bold">EduPath</span>
-<span className="font-label-sm text-label-sm text-secondary font-medium tracking-wide">Learn. Grow. Belong.</span>
+<span className="font-label-sm text-label-sm text-secondary font-medium tracking-wide">LEARN • GROW • GO FURTHER</span>
 </div>
 </div>
 <div className="pt-4 space-y-1.5">

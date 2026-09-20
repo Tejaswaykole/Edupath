@@ -3,9 +3,14 @@ import { useAgentActivity } from '../../hooks/useAgent';
 import { useAssistant } from '../../hooks/useAssistant';
 export default function AgentActivityCenterAiCompanionEdupath() {
   const { data: agentEvents, isLoading, isError } = useAgentActivity();
-  const { conversations, messages, sendMessage, isSending } = useAssistant(
-    conversations && conversations.length > 0 ? conversations[0].id : undefined
-  );
+  const [selectedConversationId, setSelectedConversationId] = useState<number | undefined>();
+  const { conversations, messages, sendMessage, isSending } = useAssistant(selectedConversationId);
+
+  useEffect(() => {
+    if (!selectedConversationId && conversations && conversations.length > 0) {
+      setSelectedConversationId(conversations[0].id);
+    }
+  }, [conversations, selectedConversationId]);
   
   const [inputText, setInputText] = useState("");
 
@@ -79,7 +84,7 @@ export default function AgentActivityCenterAiCompanionEdupath() {
 {isError && <p className="text-error text-sm">Failed to load agent telemetry.</p>}
 {agentEvents && agentEvents.length === 0 && <p className="text-secondary text-sm">No agent activity recorded yet.</p>}
 {agentEvents && agentEvents.map((event: any) => (
-<article key={event.id} className="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col gap-4 relative overflow-hidden">
+<article key={event.id} className="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col gap-4 relative overflow-hidden border border-surface-container-high/40">
 <div className="absolute top-0 left-0 bottom-0 w-1 bg-primary-container"></div>
 <div className="flex items-start justify-between gap-3">
 <div className="flex items-center gap-2.5">
@@ -88,24 +93,62 @@ export default function AgentActivityCenterAiCompanionEdupath() {
 </div>
 <div className="flex flex-col">
 <div className="flex items-center gap-2">
-<span className="font-headline-sm text-headline-sm text-on-surface">{event.event_type}</span>
+<span className="font-headline-sm text-headline-sm text-on-surface font-bold">{event.event_type}</span>
 </div>
-<span className="font-label-sm text-label-sm text-secondary">{new Date(event.occurred_at).toLocaleString()} • AI Engine</span>
+<span className="font-label-sm text-label-sm text-secondary">{new Date(event.occurred_at).toLocaleString()} • LangGraph Agent</span>
 </div>
 </div>
-<span className="px-2.5 py-1 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold tracking-wide">
-              {event.event_data?.action}
-            </span>
+<span className="px-2.5 py-1 rounded-full bg-primary-container text-white font-label-sm text-label-sm font-semibold tracking-wide">
+  {event.event_data?.action || event.event_type}
+</span>
 </div>
-{/*  Observation & Detection Box  */}
-<div className="bg-surface-container-low rounded-lg p-3.5 flex flex-col gap-2">
-<div className="flex items-center gap-2 text-on-surface font-label-md text-label-md">
-<span className="material-symbols-outlined text-[16px] text-primary-container">visibility</span>
-<span className="font-bold">Intervention Reasoning</span>
-</div>
-<p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-              {event.description}
-            </p>
+
+{/* Structured Agent Decision Trace (OBSERVE -> DETECT -> DECIDE -> ACT) */}
+<div className="bg-surface-container-low rounded-xl p-4 flex flex-col gap-3">
+  <div className="flex items-center gap-2 text-primary font-bold text-sm">
+    <span className="material-symbols-outlined text-[18px]">psychology</span>
+    <span>🧠 EduPath Adaptation Trace</span>
+  </div>
+  
+  {event.event_data?.observation && (
+    <div className="flex flex-col gap-0.5 border-l-2 border-primary/50 pl-3">
+      <span className="text-[11px] uppercase tracking-wider text-secondary font-bold">OBSERVATION</span>
+      <p className="text-sm text-on-surface font-medium">{event.event_data.observation}</p>
+    </div>
+  )}
+  
+  {event.event_data?.weak_topics && event.event_data.weak_topics.length > 0 && (
+    <div className="flex flex-col gap-0.5 border-l-2 border-amber-500 pl-3">
+      <span className="text-[11px] uppercase tracking-wider text-amber-700 font-bold">DETECTED FRICTION</span>
+      <div className="flex flex-wrap gap-1.5 mt-1">
+        {event.event_data.weak_topics.map((t: string, i: number) => (
+          <span key={i} className="px-2.5 py-0.5 rounded-full bg-surface-container-high text-xs text-on-surface font-medium">
+            • {t}
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <div className="flex flex-col gap-0.5 border-l-2 border-primary-container pl-3">
+    <span className="text-[11px] uppercase tracking-wider text-secondary font-bold">DECISION &amp; INTERVENTION</span>
+    <p className="text-sm text-on-surface-variant leading-relaxed">
+      {event.description}
+    </p>
+  </div>
+
+  {event.event_data?.actions_taken && event.event_data.actions_taken.length > 0 && (
+    <div className="flex flex-col gap-0.5 border-l-2 border-emerald-500 pl-3">
+      <span className="text-[11px] uppercase tracking-wider text-emerald-700 font-bold">ACTIONS APPLIED</span>
+      <ul className="text-xs text-on-surface space-y-1 mt-1">
+        {event.event_data.actions_taken.map((act: string, i: number) => (
+          <li key={i} className="flex items-center gap-1.5 font-medium">
+            <span className="text-emerald-600 font-bold">✓</span> {act}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
 </div>
 </article>
 ))}

@@ -9,6 +9,7 @@ from app.api.deps import require_learner
 
 router = APIRouter()
 
+@router.get("/me", response_model=LearnerProfileResponse)
 @router.get("/profile", response_model=LearnerProfileResponse)
 def get_own_profile(
     current_user: User = Depends(require_learner),
@@ -19,6 +20,9 @@ def get_own_profile(
         raise HTTPException(status_code=404, detail="Learner profile not found")
     return profile
 
+@router.put("/me", response_model=LearnerProfileResponse)
+@router.patch("/me", response_model=LearnerProfileResponse)
+@router.put("/profile", response_model=LearnerProfileResponse)
 @router.patch("/profile", response_model=LearnerProfileResponse)
 def update_own_profile(
     profile_in: LearnerProfileUpdate,

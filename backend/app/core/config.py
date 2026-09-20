@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     CORS_ALLOWED_ORIGINS: str = "http://localhost:5173"
     
     GROQ_API_KEY: str = "dummy_key_if_not_set"
+    GROQ_MODEL: str = "openai/gpt-oss-20b"
 
     @property
     def get_cors_origins(self) -> List[str]:

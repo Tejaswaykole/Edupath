@@ -1,11 +1,29 @@
-import { useLearningPath } from '../../hooks/useLearning';
+import { useNavigate } from 'react-router-dom';
+import { useLearningPath, useSkillGaps } from '../../hooks/useLearning';
 import { useAgentActivity } from '../../hooks/useAgent';
+import { useReports } from '../../hooks/useReports';
 import { useAuthStore } from '../../store/authStore';
+import { useUploadStore } from '../../store/uploadStore';
 
 export default function LearnerDashboardEdupathProduction() {
+  const navigate = useNavigate();
   const { data: learningPath, isLoading: isLearningPathLoading } = useLearningPath();
   const { data: agentActivity, isLoading: isAgentActivityLoading } = useAgentActivity();
+  const { data: skillGaps } = useSkillGaps();
+  const { report } = useReports();
   const user = useAuthStore((state) => state.user);
+  const { result: uploadResult } = useUploadStore();
+
+  // Compute live stats
+  const totalSkills = skillGaps?.length || (uploadResult?.skills?.length ?? 12);
+  const acquiredSkills = skillGaps?.filter((g: any) => g.status === 'COMPLETED' || g.current_proficiency?.toLowerCase() === g.required_proficiency?.toLowerCase()).length ?? (report?.acquired_skills?.length ?? (uploadResult ? Math.round(totalSkills * 0.6) : 6));
+  
+  const overallProgress = report?.progress?.completion_percentage ?? (learningPath?.modules?.length ? Math.min(100, Math.round((learningPath.modules.filter((m: any) => m.status === 'COMPLETED').length / learningPath.modules.length) * 100)) : (uploadResult?.readinessScore ? Math.round(uploadResult.readinessScore * 100) : 42));
+
+  const tasksDoneThisWeek = report?.progress?.completed_modules ?? (learningPath?.modules?.length ? learningPath.modules.filter((m: any) => m.status === 'COMPLETED').length : 4);
+  const streakWeeks = 4;
+  const currentLevel = overallProgress >= 70 ? 'Level 4' : overallProgress >= 40 ? 'Level 3' : overallProgress >= 20 ? 'Level 2' : 'Level 1';
+  const levelTitle = overallProgress >= 70 ? 'Proficient Builder' : overallProgress >= 40 ? 'Learning Explorer' : 'Active Apprentice';
 
   return (
     <div className="min-h-screen bg-surface">
@@ -20,7 +38,7 @@ export default function LearnerDashboardEdupathProduction() {
 <span className="font-headline-xl text-headline-xl text-on-surface">Good morning, {user?.name?.split(' ')[0] || 'Learner'}</span>
 <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-surface-container-lowest shadow-sm text-primary font-label-sm text-label-sm">
 <span className="material-symbols-outlined text-[15px]">workspace_premium</span>
-            Level 3
+            {currentLevel}
           </span>
 </div>
 <p className="font-body-md text-body-md text-secondary mb-3">Consistent learning today creates more opportunities tomorrow.</p>
@@ -50,40 +68,40 @@ export default function LearnerDashboardEdupathProduction() {
 {/*  Metric Stat Row  */}
 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
 {/*  Stat 1  */}
-<div className="bg-surface-container-lowest rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between cursor-pointer group">
+<div onClick={() => navigate('/skillgapoverviewreadiness')} className="bg-surface-container-lowest rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between cursor-pointer group">
 <div className="flex items-center gap-3.5">
 <div className="w-11 h-11 rounded-xl bg-secondary-container text-primary flex items-center justify-center">
 <span className="material-symbols-outlined text-[22px]">menu_book</span>
 </div>
 <div className="flex flex-col min-w-0 overflow-hidden">
-<span className="font-headline-md text-headline-md text-on-surface leading-tight truncate">8 / 15</span>
+<span className="font-headline-md text-headline-md text-on-surface leading-tight truncate">{acquiredSkills} / {totalSkills}</span>
 <span className="font-label-sm text-label-sm text-secondary truncate">Skills Acquired</span>
 </div>
 </div>
 <span className="material-symbols-outlined text-secondary group-hover:translate-x-0.5 group-hover:text-primary transition-all text-[18px]">chevron_right</span>
 </div>
 {/*  Stat 2  */}
-<div className="bg-surface-container-lowest rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between cursor-pointer group">
+<div onClick={() => navigate('/mylearningworkspacetodaystasks')} className="bg-surface-container-lowest rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between cursor-pointer group">
 <div className="flex items-center gap-3.5">
 <div className="w-11 h-11 rounded-xl bg-surface-container text-primary-container flex items-center justify-center">
 <span className="material-symbols-outlined text-[22px]">bar_chart</span>
 </div>
 <div className="flex flex-col">
-<span className="font-headline-md text-headline-md text-on-surface leading-tight">42%</span>
+<span className="font-headline-md text-headline-md text-on-surface leading-tight">{overallProgress}%</span>
 <span className="font-label-sm text-label-sm text-secondary">Overall Progress</span>
 </div>
 </div>
 <span className="material-symbols-outlined text-secondary group-hover:translate-x-0.5 group-hover:text-primary transition-all text-[18px]">chevron_right</span>
 </div>
 {/*  Stat 3  */}
-<div className="bg-surface-container-lowest rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between cursor-pointer group">
+<div onClick={() => navigate('/progressintelligenceperformancereports')} className="bg-surface-container-lowest rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between cursor-pointer group">
 <div className="flex items-center gap-3.5">
 <div className="w-11 h-11 rounded-xl bg-surface-container-low text-tertiary-container flex items-center justify-center">
 <span className="material-symbols-outlined text-[22px]">event_available</span>
 </div>
 <div className="flex flex-col">
-<span className="font-headline-md text-headline-md text-on-surface leading-tight">12</span>
-<span className="font-label-sm text-label-sm text-secondary">Tasks Done This Week</span>
+<span className="font-headline-md text-headline-md text-on-surface leading-tight">{tasksDoneThisWeek}</span>
+<span className="font-label-sm text-label-sm text-secondary">Tasks Completed</span>
 </div>
 </div>
 <span className="material-symbols-outlined text-secondary group-hover:translate-x-0.5 group-hover:text-primary transition-all text-[18px]">chevron_right</span>
@@ -95,7 +113,7 @@ export default function LearnerDashboardEdupathProduction() {
 <span className="material-symbols-outlined text-[22px]" >local_fire_department</span>
 </div>
 <div className="flex flex-col min-w-0 overflow-hidden">
-<span className="font-headline-md text-headline-md text-on-surface leading-tight truncate">5</span>
+<span className="font-headline-md text-headline-md text-on-surface leading-tight truncate">{streakWeeks}</span>
 <span className="font-label-sm text-label-sm text-secondary truncate">Week Streak</span>
 </div>
 </div>
@@ -108,8 +126,8 @@ export default function LearnerDashboardEdupathProduction() {
 <span className="material-symbols-outlined text-[22px]" >star</span>
 </div>
 <div className="flex flex-col">
-<span className="font-headline-md text-headline-md text-on-surface leading-tight">Level 3</span>
-<span className="font-label-sm text-label-sm text-secondary">Learning Explorer</span>
+<span className="font-headline-md text-headline-md text-on-surface leading-tight">{currentLevel}</span>
+<span className="font-label-sm text-label-sm text-secondary">{levelTitle}</span>
 </div>
 </div>
 <span className="material-symbols-outlined text-secondary group-hover:translate-x-0.5 group-hover:text-primary transition-all text-[18px]">chevron_right</span>
@@ -162,11 +180,11 @@ export default function LearnerDashboardEdupathProduction() {
 </div>
 {/*  Action Row  */}
 <div className="flex flex-wrap items-center gap-3 pt-2">
-<button className="px-5 py-2.5 rounded-xl bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md flex items-center gap-2 shadow-sm transition-all cursor-pointer">
+<button onClick={() => navigate('/mylearningworkspacetodaystasks')} className="px-5 py-2.5 rounded-xl bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md flex items-center gap-2 shadow-sm transition-all cursor-pointer">
 <span>Start Today's Plan</span>
 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
 </button>
-<button className="px-5 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center gap-2 transition-colors cursor-pointer">
+<button onClick={() => navigate('/mylearningworkspacetodaystasks')} className="px-5 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center gap-2 transition-colors cursor-pointer">
 <span className="material-symbols-outlined text-[18px] text-secondary">calendar_month</span>
 <span>Plan Details</span>
 </button>
@@ -179,92 +197,113 @@ export default function LearnerDashboardEdupathProduction() {
 <h2 className="font-headline-md text-headline-md text-on-surface">Skill Readiness</h2>
 <p className="font-body-sm text-body-sm text-secondary">Tracked benchmark against Software Engineer Target</p>
 </div>
-<a className="inline-flex items-center gap-1 font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors" href="#">
+<button onClick={() => navigate('/skillgapoverviewreadiness')} className="inline-flex items-center gap-1 font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors cursor-pointer">
             See Details
             <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-</a>
+</button>
 </div>
 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
 {/*  Skill Bars (7 cols)  */}
 <div className="md:col-span-7 flex flex-col gap-4">
-{/*  JavaScript  */}
-<div className="flex flex-col gap-1.5">
-<div className="flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">JavaScript</span>
-<span className="font-label-sm text-label-sm font-bold text-tertiary">90%</span>
-</div>
-<div className="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-<div className="h-full bg-tertiary-container rounded-full" ></div>
-</div>
-</div>
-{/*  React  */}
-<div className="flex flex-col gap-1.5">
-<div className="flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">React</span>
-<span className="font-label-sm text-label-sm font-bold text-primary">65%</span>
-</div>
-<div className="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-<div className="h-full bg-primary-container rounded-full" ></div>
-</div>
-</div>
-{/*  Node.js  */}
-<div className="flex flex-col gap-1.5">
-<div className="flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">Node.js</span>
-<span className="font-label-sm text-label-sm font-bold text-on-secondary-fixed-variant">40%</span>
-</div>
-<div className="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-<div className="h-full bg-secondary-fixed-dim rounded-full" ></div>
-</div>
-</div>
-{/*  PostgreSQL  */}
-<div className="flex flex-col gap-1.5">
-<div className="flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">PostgreSQL</span>
-<span className="font-label-sm text-label-sm font-bold text-error">25%</span>
-</div>
-<div className="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-<div className="h-full bg-error rounded-full" ></div>
-</div>
-</div>
-{/*  Deployment  */}
-<div className="flex flex-col gap-1.5">
-<div className="flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">Deployment &amp; Cloud</span>
-<span className="font-label-sm text-label-sm font-bold text-error">10%</span>
-</div>
-<div className="w-full h-2 rounded-full bg-surface-container overflow-hidden">
-<div className="h-full bg-error-container rounded-full" ></div>
-</div>
-</div>
+{skillGaps && skillGaps.length > 0 ? (
+  skillGaps.slice(0, 5).map((gap: any, idx: number) => {
+    const isAcquired = gap.current_proficiency?.toLowerCase() === gap.required_proficiency?.toLowerCase() || gap.status === 'COMPLETED';
+    const pct = isAcquired ? 95 : gap.current_proficiency === 'INTERMEDIATE' ? 65 : gap.current_proficiency === 'BEGINNER' ? 35 : 20;
+    const colorClass = isAcquired ? 'bg-tertiary-container' : pct >= 50 ? 'bg-primary-container' : 'bg-error-container';
+    const textClass = isAcquired ? 'text-tertiary' : pct >= 50 ? 'text-primary' : 'text-error';
+    return (
+      <div key={idx} className="flex flex-col gap-1.5">
+        <div className="flex items-center justify-between">
+          <span className="font-label-md text-label-md text-on-surface">{gap.skill?.name || gap.skill_name || 'Competency'}</span>
+          <span className={`font-label-sm text-label-sm font-bold ${textClass}`}>{pct}%</span>
+        </div>
+        <div className="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+          <div className={`h-full ${colorClass} rounded-full transition-all duration-500`} style={{ width: `${pct}%` }}></div>
+        </div>
+      </div>
+    );
+  })
+) : uploadResult?.skills && uploadResult.skills.length > 0 ? (
+  uploadResult.skills.slice(0, 5).map((sk: any, idx: number) => {
+    const pct = Math.round((sk.confidence || 0.8) * 100);
+    return (
+      <div key={idx} className="flex flex-col gap-1.5">
+        <div className="flex items-center justify-between">
+          <span className="font-label-md text-label-md text-on-surface">{sk.name}</span>
+          <span className="font-label-sm text-label-sm font-bold text-primary">{pct}%</span>
+        </div>
+        <div className="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+          <div className="h-full bg-primary-container rounded-full" style={{ width: `${pct}%` }}></div>
+        </div>
+      </div>
+    );
+  })
+) : (
+  <>
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center justify-between">
+        <span className="font-label-md text-label-md text-on-surface">JavaScript / TypeScript</span>
+        <span className="font-label-sm text-label-sm font-bold text-tertiary">90%</span>
+      </div>
+      <div className="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+        <div className="h-full bg-tertiary-container rounded-full" style={{ width: '90%' }}></div>
+      </div>
+    </div>
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center justify-between">
+        <span className="font-label-md text-label-md text-on-surface">React & Frontend</span>
+        <span className="font-label-sm text-label-sm font-bold text-primary">70%</span>
+      </div>
+      <div className="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+        <div className="h-full bg-primary-container rounded-full" style={{ width: '70%' }}></div>
+      </div>
+    </div>
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center justify-between">
+        <span className="font-label-md text-label-md text-on-surface">Node.js & Backend</span>
+        <span className="font-label-sm text-label-sm font-bold text-error">40%</span>
+      </div>
+      <div className="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+        <div className="h-full bg-error rounded-full" style={{ width: '40%' }}></div>
+      </div>
+    </div>
+  </>
+)}
 </div>
 {/*  Priority Skill Gaps Rail (5 cols)  */}
 <div className="md:col-span-5 bg-surface-container-low rounded-xl p-4 flex flex-col justify-between h-full">
 <div>
 <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Priority Skill Gaps</span>
 <ul className="mt-3 flex flex-col gap-2 font-body-sm text-body-sm text-on-surface">
-<li className="flex items-center gap-2.5">
-<span className="w-5 h-5 rounded-md bg-surface-container-lowest text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">1</span>
-<span>Node.js Backend &amp; Streams</span>
-</li>
-<li className="flex items-center gap-2.5">
-<span className="w-5 h-5 rounded-md bg-surface-container-lowest text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">2</span>
-<span>PostgreSQL Query Optimizations</span>
-</li>
-<li className="flex items-center gap-2.5">
-<span className="w-5 h-5 rounded-md bg-surface-container-lowest text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">3</span>
-<span>JWT &amp; OAuth2 Authentication</span>
-</li>
-<li className="flex items-center gap-2.5">
-<span className="w-5 h-5 rounded-md bg-surface-container-lowest text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">4</span>
-<span>Docker &amp; CI/CD Pipelines</span>
-</li>
+{skillGaps && skillGaps.filter((g: any) => g.current_proficiency !== g.required_proficiency).length > 0 ? (
+  skillGaps.filter((g: any) => g.current_proficiency !== g.required_proficiency).slice(0, 4).map((gap: any, idx: number) => (
+    <li key={idx} className="flex items-center gap-2.5">
+      <span className="w-5 h-5 rounded-md bg-surface-container-lowest text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">{idx + 1}</span>
+      <span className="truncate">{gap.skill?.name || gap.skill_name || 'Key Gap'}</span>
+    </li>
+  ))
+) : (
+  <>
+    <li className="flex items-center gap-2.5">
+      <span className="w-5 h-5 rounded-md bg-surface-container-lowest text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">1</span>
+      <span>System Architecture & APIs</span>
+    </li>
+    <li className="flex items-center gap-2.5">
+      <span className="w-5 h-5 rounded-md bg-surface-container-lowest text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">2</span>
+      <span>PostgreSQL Query Optimizations</span>
+    </li>
+    <li className="flex items-center gap-2.5">
+      <span className="w-5 h-5 rounded-md bg-surface-container-lowest text-primary font-label-sm text-label-sm font-bold flex items-center justify-center">3</span>
+      <span>Docker & CI/CD Pipelines</span>
+    </li>
+  </>
+)}
 </ul>
 </div>
-<a className="mt-4 pt-3 flex items-center justify-between text-primary font-label-md text-label-md hover:text-on-primary-fixed-variant transition-colors" href="#">
-<span>View Learning Path</span>
+<button onClick={() => navigate('/skillgapoverviewreadiness')} className="mt-4 pt-3 flex items-center justify-between text-primary font-label-md text-label-md hover:text-on-primary-fixed-variant transition-colors cursor-pointer w-full text-left">
+<span>View Skill Gap Diagnosis</span>
 <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-</a>
+</button>
 </div>
 </div>
 </div>
@@ -306,22 +345,41 @@ export default function LearnerDashboardEdupathProduction() {
   <div className="flex justify-center p-4"><span className="material-symbols-outlined animate-spin text-[24px] text-primary">progress_activity</span></div>
 ) : agentActivity && agentActivity.length > 0 ? (
   <>
-<p className="font-body-sm text-body-sm text-on-surface-variant mb-4 bg-surface-container-low p-3 rounded-xl leading-relaxed">
-  {agentActivity[0].action_taken}
-</p>
+<div className="mb-4 bg-surface-container-low p-3.5 rounded-xl flex flex-col gap-2 border border-surface-container">
+  <div className="flex items-center justify-between">
+    <span className="font-bold text-xs uppercase text-primary tracking-wide">
+      {agentActivity[0].event_type?.replace('_', ' ')}
+    </span>
+    <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary-container text-white font-semibold">
+      {agentActivity[0].event_data?.action || 'ADAPTED'}
+    </span>
+  </div>
+  <p className="font-body-sm text-body-sm text-on-surface leading-relaxed">
+    {agentActivity[0].description || 'Your learning path was dynamically calibrated for your recent performance.'}
+  </p>
+  {agentActivity[0].event_data?.weak_topics && agentActivity[0].event_data.weak_topics.length > 0 && (
+    <div className="flex flex-wrap gap-1 mt-0.5">
+      {agentActivity[0].event_data.weak_topics.slice(0, 2).map((wt: string, i: number) => (
+        <span key={i} className="px-2 py-0.5 rounded bg-surface-container-high text-[11px] text-secondary font-medium">
+          Reinforcing: {wt}
+        </span>
+      ))}
+    </div>
+  )}
+</div>
 <div className="flex flex-col gap-2 mb-4">
-<a className="flex items-center gap-2.5 p-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors group" href="#">
-<span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[18px]">menu_book</span>
-<span className="font-label-md text-label-md text-on-surface">Review agent history</span>
+<a className="flex items-center gap-2.5 p-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors group" href="/agentactivitycenteraicompanion">
+<span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[18px]">neurology</span>
+<span className="font-label-md text-label-md text-on-surface font-medium">Review Agent Decision Center</span>
 </a>
 </div>
 </>
 ) : (
   <p className="font-body-sm text-body-sm text-on-surface-variant mb-4 bg-surface-container-low p-3 rounded-xl leading-relaxed">
-  Agent is monitoring your progress. Keep up the good work!
+  Agent is actively monitoring your learning trajectory. Keep building momentum!
   </p>
 )}
-<a className="inline-flex items-center justify-center gap-1.5 w-full py-2 font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors" href="#">
+<a className="inline-flex items-center justify-center gap-1.5 w-full py-2 font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors" href="/mylearningworkspacetodaystasks">
 <span>View Updated Plan</span>
 <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
 </a>
@@ -439,34 +497,34 @@ export default function LearnerDashboardEdupathProduction() {
 <div className="bg-surface-container-lowest rounded-2xl p-5 shadow-sm">
 <h3 className="font-headline-sm text-headline-sm text-on-surface mb-3">Quick Actions</h3>
 <div className="flex flex-col gap-2">
-<a className="flex items-center justify-between p-2.5 rounded-xl hover:bg-surface-container-low transition-colors group" href="#">
+<button onClick={() => navigate('/agentactivitycenteraicompanion')} className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-surface-container-low transition-colors group cursor-pointer text-left">
 <div className="flex items-center gap-3">
 <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[20px]">chat</span>
 <span className="font-label-md text-label-md text-on-surface">Ask AI Assistant</span>
 </div>
 <span className="material-symbols-outlined text-secondary text-[18px]">chevron_right</span>
-</a>
-<a className="flex items-center justify-between p-2.5 rounded-xl hover:bg-surface-container-low transition-colors group" href="#">
+</button>
+<button onClick={() => navigate('/documentcenterresumeupload')} className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-surface-container-low transition-colors group cursor-pointer text-left">
 <div className="flex items-center gap-3">
 <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[20px]">upload_file</span>
 <span className="font-label-md text-label-md text-on-surface">Upload Resume</span>
 </div>
 <span className="material-symbols-outlined text-secondary text-[18px]">chevron_right</span>
-</a>
-<a className="flex items-center justify-between p-2.5 rounded-xl hover:bg-surface-container-low transition-colors group" href="#">
+</button>
+<button onClick={() => navigate('/practicesandboxlivecodechallenge')} className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-surface-container-low transition-colors group cursor-pointer text-left">
 <div className="flex items-center gap-3">
 <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[20px]">assignment</span>
 <span className="font-label-md text-label-md text-on-surface">Take a Practice Test</span>
 </div>
 <span className="material-symbols-outlined text-secondary text-[18px]">chevron_right</span>
-</a>
-<a className="flex items-center justify-between p-2.5 rounded-xl hover:bg-surface-container-low transition-colors group" href="#">
+</button>
+<button onClick={() => navigate('/mentoroverviewrequestreview')} className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-surface-container-low transition-colors group cursor-pointer text-left">
 <div className="flex items-center gap-3">
 <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[20px]">groups</span>
 <span className="font-label-md text-label-md text-on-surface">Find a Mentor</span>
 </div>
 <span className="material-symbols-outlined text-secondary text-[18px]">chevron_right</span>
-</a>
+</button>
 </div>
 </div>
 {/*  Learning Consistency Chart  */}

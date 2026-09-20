@@ -1,5 +1,11 @@
+import { useNavigate } from 'react-router-dom';
+import { useUploadStore } from '../../store/uploadStore';
 
 export default function AnalysisConfirmedEdupath() {
+  const navigate = useNavigate();
+  const { result: uploadResult } = useUploadStore();
+  const skillCount = uploadResult?.skills?.length ?? 14;
+  const experienceYears = uploadResult?.experience?.length ? uploadResult.experience.reduce((s, e) => s + (e.years || 0), 0) : 2;
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -19,11 +25,11 @@ export default function AnalysisConfirmedEdupath() {
         </p>
 </div>
 <div className="flex flex-wrap items-center gap-space-sm shrink-0">
-<button className="inline-flex items-center gap-2 px-space-lg py-3 rounded-xl bg-surface-container-lowest text-primary font-label-md text-label-md shadow-md hover:bg-surface-container-low transition-all" type="button">
+<button onClick={() => navigate('/learnerprofile')} className="inline-flex items-center gap-2 px-space-lg py-3 rounded-xl bg-surface-container-lowest text-primary font-label-md text-label-md shadow-md hover:bg-surface-container-low transition-all cursor-pointer" type="button">
 <span>View Full Profile</span>
 <span className="material-symbols-outlined text-[18px]">visibility</span>
 </button>
-<button className="inline-flex items-center gap-2 px-space-lg py-3 rounded-xl bg-tertiary-fixed text-on-tertiary-fixed font-label-md text-label-md shadow-md hover:opacity-90 transition-all" id="launchAnalysisBtn" type="button">
+<button onClick={() => navigate('/skillgapoverviewreadiness')} className="inline-flex items-center gap-2 px-space-lg py-3 rounded-xl bg-tertiary-fixed text-on-tertiary-fixed font-label-md text-label-md shadow-md hover:opacity-90 transition-all cursor-pointer" id="launchAnalysisBtn" type="button">
 <span>Analyze My Skill Gaps</span>
 <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
 </button>
@@ -47,7 +53,7 @@ export default function AnalysisConfirmedEdupath() {
 </div>
 <div className="min-w-0">
 <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider block">Verified Competencies</span>
-<span className="font-headline-sm text-headline-sm text-on-surface truncate block">14 Skills Parsed</span>
+<span className="font-headline-sm text-headline-sm text-on-surface truncate block">{skillCount} Skills Parsed</span>
 <span className="font-label-sm text-label-sm text-tertiary font-medium">100% Signal Match</span>
 </div>
 </div>
@@ -57,7 +63,7 @@ export default function AnalysisConfirmedEdupath() {
 </div>
 <div className="min-w-0">
 <span className="font-label-sm text-label-sm text-secondary uppercase tracking-wider block">Logged Experience</span>
-<span className="font-headline-sm text-headline-sm text-on-surface truncate block">2+ Years</span>
+<span className="font-headline-sm text-headline-sm text-on-surface truncate block">{experienceYears > 0 ? `${experienceYears.toFixed(1)}+` : '1+'} Years</span>
 <span className="font-label-sm text-label-sm text-secondary font-medium">Project-Based Index</span>
 </div>
 </div>
@@ -112,7 +118,7 @@ export default function AnalysisConfirmedEdupath() {
 <span className="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Completed Just Now
                 </span>
 </div>
-<p className="font-body-sm text-body-sm text-on-surface-variant">14 verified technical markers extracted from recent repos, verified certifications, and work logs.</p>
+<p className="font-body-sm text-body-sm text-on-surface-variant">{skillCount} verified technical markers extracted from your resume, verified certifications, and work history.</p>
 </div>
 </div>
 <div className="relative flex items-start gap-space-md group">
@@ -125,14 +131,14 @@ export default function AnalysisConfirmedEdupath() {
 <span className="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container">Next Up • Unlocked</span>
 </div>
 <p className="font-body-md text-body-md text-on-surface-variant mb-space-md">
-                Compare your 14 skills against <strong className="text-on-surface font-semibold">500+ live Full Stack job specs</strong> to detect missing competencies (System Design, Advanced SQL, Next.js 14, CI/CD).
+                Compare your {skillCount} skills against <strong className="text-on-surface font-semibold">500+ live Full Stack job specs</strong> to detect missing competencies and bridge your career gaps.
               </p>
 <div className="p-space-md bg-surface-container-low rounded-xl flex flex-wrap items-center justify-between gap-space-md">
 <div className="flex items-center gap-space-sm">
 <span className="material-symbols-outlined text-primary text-[20px]">auto_awesome</span>
 <span className="font-body-sm text-body-sm text-on-surface font-medium">Estimated benchmark run-time: ~18 seconds</span>
 </div>
-<button className="inline-flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors" type="button">
+<button onClick={() => navigate('/skillgapoverviewreadiness')} className="inline-flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors cursor-pointer" type="button">
 <span>Start Live Comparison</span>
 <span className="material-symbols-outlined text-[16px]">chevron_right</span>
 </button>
@@ -156,41 +162,22 @@ export default function AnalysisConfirmedEdupath() {
 <div className="p-space-xl bg-surface-container-lowest rounded-2xl shadow-sm">
 <div className="flex items-center justify-between mb-space-md">
 <h2 className="font-headline-md text-headline-md text-on-surface">Logged Skill Inventory</h2>
-<span className="font-label-sm text-label-sm text-secondary">14 Parsed Items</span>
+<span className="font-label-sm text-label-sm text-secondary">{skillCount} Parsed Items</span>
 </div>
 <div className="grid grid-cols-2 sm:grid-cols-4 gap-space-sm">
-<div className="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">JavaScript ES6+</span>
-<span className="material-symbols-outlined text-tertiary text-[18px]">check</span>
-</div>
-<div className="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">React 18</span>
-<span className="material-symbols-outlined text-tertiary text-[18px]">check</span>
-</div>
-<div className="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">Node.js Basics</span>
-<span className="material-symbols-outlined text-tertiary text-[18px]">check</span>
-</div>
-<div className="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">RESTful APIs</span>
-<span className="material-symbols-outlined text-tertiary text-[18px]">check</span>
-</div>
-<div className="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">TypeScript</span>
-<span className="material-symbols-outlined text-tertiary text-[18px]">check</span>
-</div>
-<div className="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">Git &amp; GitHub</span>
-<span className="material-symbols-outlined text-tertiary text-[18px]">check</span>
-</div>
-<div className="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">Tailwind CSS</span>
-<span className="material-symbols-outlined text-tertiary text-[18px]">check</span>
-</div>
-<div className="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between">
-<span className="font-label-md text-label-md text-on-surface">HTML5 / Semantic</span>
-<span className="material-symbols-outlined text-tertiary text-[18px]">check</span>
-</div>
+{uploadResult?.skills?.slice(0, 8).map((skill, i) => (
+  <div key={i} className="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between">
+    <span className="font-label-md text-label-md text-on-surface truncate">{skill.name}</span>
+    <span className="material-symbols-outlined text-tertiary text-[18px]">check</span>
+  </div>
+)) ?? [
+  'JavaScript', 'React', 'Node.js', 'REST APIs', 'TypeScript', 'Git', 'CSS', 'HTML'
+].map((name, i) => (
+  <div key={i} className="p-space-sm rounded-xl bg-surface-container-low flex items-center justify-between">
+    <span className="font-label-md text-label-md text-on-surface">{name}</span>
+    <span className="material-symbols-outlined text-tertiary text-[18px]">check</span>
+  </div>
+))}
 </div>
 </div>
 </div>
@@ -209,7 +196,7 @@ export default function AnalysisConfirmedEdupath() {
 </div>
 <div className="p-space-md bg-surface-container-low rounded-xl mb-space-md">
 <p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-            “Agent Tejas will now simulate your skill tree against real-world tech requirements across leading engineering teams. We will pin down precise competencies to reach senior readiness.”
+            "EduPath Agent will now simulate your skill tree against real-world tech requirements across leading engineering teams. We will pin down precise competencies to reach senior readiness."
           </p>
 </div>
 <div className="space-y-space-sm mb-space-lg">
@@ -226,7 +213,7 @@ export default function AnalysisConfirmedEdupath() {
 <span className="font-label-md text-label-md text-on-surface">High-Precision Adaptive</span>
 </div>
 </div>
-<button className="w-full py-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-all flex items-center justify-center gap-2 shadow-sm" type="button">
+<button onClick={() => navigate('/skillgapoverviewreadiness')} className="w-full py-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer" type="button">
 <span className="material-symbols-outlined text-[18px]">insights</span>
 <span>Run Gap Analysis Now</span>
 </button>

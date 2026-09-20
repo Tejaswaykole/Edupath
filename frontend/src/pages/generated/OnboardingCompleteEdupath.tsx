@@ -10,9 +10,7 @@ export default function OnboardingCompleteEdupath() {
 {/*  Brand Anchor Minimal Header  */}
 <div className="w-full max-w-[620px] flex items-center justify-between mb-8">
 <div className="flex items-center gap-2.5">
-<div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline-md text-headline-md shadow-sm">
-<span className="material-symbols-outlined text-[18px]">school</span>
-</div>
+<img alt="EduPath" className="w-8 h-8 object-contain rounded-lg shadow-sm" src="/logo.png"/>
 <div className="flex flex-col">
 <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight">EduPath</span>
 <span className="font-label-sm text-label-sm text-secondary -mt-1 tracking-wider uppercase">Professional Hub</span>

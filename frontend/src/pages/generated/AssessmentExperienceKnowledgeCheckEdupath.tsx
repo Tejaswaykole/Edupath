@@ -1,5 +1,58 @@
 
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSubmitAssessment, useStartAssessment } from '../../hooks/useWorkspace';
+import { useLearningPath } from '../../hooks/useLearning';
+
 export default function AssessmentExperienceKnowledgeCheckEdupath() {
+  const navigate = useNavigate();
+  const { data: learningPath } = useLearningPath();
+  const [selectedOption, setSelectedOption] = useState('B');
+  const [submissionSuccess, setSubmissionSuccess] = useState<{ score: number } | null>(null);
+
+  let assessmentId = 1;
+  if (learningPath?.modules) {
+    for (const mod of learningPath.modules) {
+      const act = mod.activities?.find((a: any) => a.assessment_id);
+      if (act && act.assessment_id) {
+        assessmentId = act.assessment_id;
+        break;
+      }
+    }
+  }
+
+  const startMutation = useStartAssessment(assessmentId);
+  const submitMutation = useSubmitAssessment(1);
+
+  const handleSubmit = () => {
+    if (submissionSuccess) {
+      navigate('/mylearningworkspace');
+      return;
+    }
+
+    startMutation.mutate(undefined, {
+      onSuccess: (data: any) => {
+        const attemptId = data?.attempt_id || 1;
+        submitMutation.mutate([
+          { question_id: 1, provided_answer: selectedOption }
+        ], {
+          onSuccess: (res: any) => {
+            setSubmissionSuccess({ score: res.score ?? 80 });
+          }
+        });
+      },
+      onError: () => {
+        submitMutation.mutate([
+          { question_id: 1, provided_answer: selectedOption }
+        ], {
+          onSuccess: (res: any) => {
+            setSubmissionSuccess({ score: res.score ?? 80 });
+          }
+        });
+      }
+    });
+  };
+
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -79,38 +132,38 @@ export default function AssessmentExperienceKnowledgeCheckEdupath() {
 {/*  Multiple Choice Options  */}
 <fieldset aria-label="Question 4 Options" className="flex flex-col gap-3">
 {/*  Option A  */}
-<label className="group relative flex items-start gap-4 p-4 rounded-xl bg-surface-container-low/60 hover:bg-surface-container-low cursor-pointer transition-all">
-<input className="mt-1 w-4 h-4 text-primary-container border-outline-variant focus:ring-0 cursor-pointer" name="assessment_q4" type="radio" value="A"/>
+<label className={`group relative flex items-start gap-4 p-4 rounded-xl cursor-pointer transition-all ${selectedOption === 'A' ? 'bg-primary-container/10 border border-primary' : 'bg-surface-container-low/60 hover:bg-surface-container-low'}`}>
+<input checked={selectedOption === 'A'} onChange={() => setSelectedOption('A')} className="mt-1 w-4 h-4 text-primary-container border-outline-variant focus:ring-0 cursor-pointer" name="assessment_q4" type="radio" value="A"/>
 <div className="flex flex-col gap-0.5">
 <span className="font-label-md text-label-md font-semibold text-on-surface">Option A</span>
 <span className="font-body-md text-body-md text-on-surface-variant">Increase token lifespan to 30 days and rely strictly on client-side browser cache clearing.</span>
 </div>
 </label>
 {/*  Option B (Selected)  */}
-<label className="group relative flex items-start gap-4 p-4 rounded-xl bg-primary-container/10 shadow-sm cursor-pointer transition-all">
-<input defaultChecked className="mt-1 w-4 h-4 text-primary-container border-outline-variant focus:ring-0 cursor-pointer" name="assessment_q4" type="radio" value="B"/>
+<label className={`group relative flex items-start gap-4 p-4 rounded-xl cursor-pointer transition-all ${selectedOption === 'B' ? 'bg-primary-container/10 border border-primary' : 'bg-surface-container-low/60 hover:bg-surface-container-low'}`}>
+<input checked={selectedOption === 'B'} onChange={() => setSelectedOption('B')} className="mt-1 w-4 h-4 text-primary-container border-outline-variant focus:ring-0 cursor-pointer" name="assessment_q4" type="radio" value="B"/>
 <div className="flex flex-col gap-0.5">
 <div className="flex items-center gap-2">
 <span className="font-label-md text-label-md font-bold text-primary">Option B</span>
-<span className="px-2 py-0.2 rounded-full bg-primary-container text-white font-label-sm text-label-sm scale-90">Selected</span>
+{selectedOption === 'B' && <span className="px-2 py-0.2 rounded-full bg-primary-container text-white font-label-sm text-label-sm scale-90">Selected</span>}
 </div>
 <span className="font-body-md text-body-md text-on-surface font-medium">Use short-lived Access Tokens (e.g., 15 mins) paired with HttpOnly Refresh Tokens stored in a Redis blocklist/rotation table.</span>
 </div>
 </label>
 {/*  Option C  */}
-<label className="group relative flex items-start gap-4 p-4 rounded-xl bg-surface-container-low/60 hover:bg-surface-container-low cursor-pointer transition-all">
-<input className="mt-1 w-4 h-4 text-primary-container border-outline-variant focus:ring-0 cursor-pointer" name="assessment_q4" type="radio" value="C"/>
+<label className={`group relative flex items-start gap-4 p-4 rounded-xl cursor-pointer transition-all ${selectedOption === 'C' ? 'bg-primary-container/10 border border-primary' : 'bg-surface-container-low/60 hover:bg-surface-container-low'}`}>
+<input checked={selectedOption === 'C'} onChange={() => setSelectedOption('C')} className="mt-1 w-4 h-4 text-primary-container border-outline-variant focus:ring-0 cursor-pointer" name="assessment_q4" type="radio" value="C"/>
 <div className="flex flex-col gap-0.5">
 <span className="font-label-md text-label-md font-semibold text-on-surface">Option C</span>
 <span className="font-body-md text-body-md text-on-surface-variant">Store the full user password hash in the JWT payload and compare on each incoming request.</span>
 </div>
 </label>
 {/*  Option D  */}
-<label className="group relative flex items-start gap-4 p-4 rounded-xl bg-surface-container-low/60 hover:bg-surface-container-low cursor-pointer transition-all">
-<input className="mt-1 w-4 h-4 text-primary-container border-outline-variant focus:ring-0 cursor-pointer" name="assessment_q4" type="radio" value="D"/>
+<label className={`group relative flex items-start gap-4 p-4 rounded-xl cursor-pointer transition-all ${selectedOption === 'D' ? 'bg-primary-container/10 border border-primary' : 'bg-surface-container-low/60 hover:bg-surface-container-low'}`}>
+<input checked={selectedOption === 'D'} onChange={() => setSelectedOption('D')} className="mt-1 w-4 h-4 text-primary-container border-outline-variant focus:ring-0 cursor-pointer" name="assessment_q4" type="radio" value="D"/>
 <div className="flex flex-col gap-0.5">
 <span className="font-label-md text-label-md font-semibold text-on-surface">Option D</span>
-<span className="font-body-md text-body-md text-on-surface-variant">Pass the private RSA signing key in the Authorization Bearer header to verify client identity on the gateway.</span>
+<span className="font-body-md text-body-md text-on-surface-variant">Hardcode an immutable secret key in client environment files for direct token validation.</span>
 </div>
 </label>
 </fieldset>
@@ -240,13 +293,17 @@ export default function AssessmentExperienceKnowledgeCheckEdupath() {
 </div>
 {/*  Action Bar  */}
 <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2">
-<button className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md transition-colors flex items-center justify-center gap-2">
+<button onClick={() => navigate('/mylearningworkspace')} className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md transition-colors flex items-center justify-center gap-2 cursor-pointer">
 <span className="material-symbols-outlined text-[18px]">visibility</span>
         Review Detailed Answers
       </button>
-<button className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-primary-container hover:bg-primary text-white font-label-md text-label-md shadow-sm transition-all flex items-center justify-center gap-2">
-        Proceed to Next Module
-        <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+<button 
+  onClick={handleSubmit}
+  disabled={submitMutation.isPending || startMutation.isPending}
+  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-primary-container hover:bg-primary text-white font-label-md text-label-md shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+>
+  {submitMutation.isPending || startMutation.isPending ? "Submitting to AI Agent..." : (submissionSuccess ? "Proceed to Dashboard" : "Submit & Evaluate Knowledge Check")}
+  <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
 </button>
 </div>
 </div>

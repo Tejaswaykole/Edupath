@@ -2,7 +2,7 @@ import React from 'react';
 import { useMentorship } from '../../hooks/useMentorship';
 
 export default function MentorshipWorkspaceActiveGuidanceEdupath() {
-  const { activeMentorships, useGuidance } = useMentorship();
+  const { activeMentorships, isLoadingActiveMentorships, useGuidance } = useMentorship();
   const activeMentorship = activeMentorships && activeMentorships.length > 0 ? activeMentorships[0] : null;
   const { data: guidanceList } = useGuidance(activeMentorship?.id || 0);
   const activeGuidance = guidanceList && guidanceList.length > 0 ? guidanceList[0] : null;

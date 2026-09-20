@@ -1,3 +1,47 @@
+# Dependencies & environments
+node_modules/
+venv/
+.venv/
+backend/venv/
+backend/.venv/
+
+# Secrets & Environment variables
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pytest_cache/
+.pytest_cache/
+backend/.pytest_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
+dist/
+dist-ssr/
+build/
+
+# Uploads & Temporary files
+backend/app/uploads/*
+!backend/app/uploads/.gitkeep
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Assets & references
 Ui zips/
 ui_reference/
-backend/

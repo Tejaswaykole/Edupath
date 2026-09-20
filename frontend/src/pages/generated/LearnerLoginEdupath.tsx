@@ -1,15 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import client from '../../api/client';
 
 export default function LearnerLoginEdupath() {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
+  
+  const [email, setEmail] = useState('nikhil.demo@edupath.local');
+  const [password, setPassword] = useState('password123');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    login({ id: 1, email: 'learner@example.com', role: 'learner', name: 'Alex' }, 'mock-token-123');
-    navigate('/learnerdashboardedupathproduction');
+    setErrorMessage('');
+    setIsLoading(true);
+    try {
+      const response = await client.post('/auth/login', { email, password });
+      const { access_token, user } = response.data;
+      login(user, access_token);
+      navigate('/learnerdashboardproduction');
+    } catch (err: any) {
+      const detail = err.response?.data?.detail || 'Invalid email or password';
+      setErrorMessage(detail);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <div className="min-h-screen bg-surface">
@@ -19,14 +36,19 @@ export default function LearnerLoginEdupath() {
 {/*  Brand Header  */}
 <div className="flex flex-col items-center text-center w-full">
 <div className="flex items-center gap-3 mb-5">
-<img alt="EduPath Logo Mark" className="w-10 h-10 object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UW82HvmiPy5TMo7cU3gRwBiU3baDfcaiEOnyNASWlxwTVH0w0qIkNHoitLzMolXacL-2tGekbbOW8xuiE-cFOTqz3XSg6tMXidYpz4GWTD9ElmxSIusWHfPloyzQX4ShPK6uAbsckWXk0QAmTGvpHPR8UpvJbzypQPbEy08-huoIQrDNTtxARo_QwXykp2DRz9wjaWKAk9oBlNnhorpC0KbV5ertGX9YPXANETHdtirg"/>
-<span className="font-headline-lg text-headline-lg text-on-surface tracking-tight">EduPath</span>
+<img alt="EduPath Logo" className="w-11 h-11 object-contain rounded-lg shadow-sm" src="/logo.png"/>
+<span className="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">EduPath</span>
 </div>
 <h1 className="font-headline-xl text-headline-xl text-on-surface mb-2">Welcome back</h1>
 <p className="font-body-md text-body-md text-on-surface-variant max-w-[360px]">
         Sign in to continue your personalized learning journey and track your career milestones.
       </p>
 </div>
+{errorMessage && (
+  <div className="mt-4 w-full p-3 rounded-lg bg-red-50 text-red-700 text-sm border border-red-200">
+    {errorMessage}
+  </div>
+)}
 {/*  Active Streak Badge Teaser  */}
 <div className="mt-6 w-full bg-secondary-container/40 rounded-lg p-3 flex items-center justify-between">
 <div className="flex items-center gap-2.5">
@@ -54,7 +76,7 @@ export default function LearnerLoginEdupath() {
 <span className="material-symbols-outlined absolute left-3.5 text-on-surface-variant/70 select-none text-headline-sm pointer-events-none">
             mail
           </span>
-<input className="w-full pl-10 pr-4 py-2.5 bg-surface-container-low font-body-md text-body-md text-on-surface rounded-lg outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary-container transition-all placeholder:text-on-surface-variant/60" id="emailInput" name="email" placeholder="name@example.com" required type="email"/>
+<input value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-surface-container-low font-body-md text-body-md text-on-surface rounded-lg outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary-container transition-all placeholder:text-on-surface-variant/60" id="emailInput" name="email" placeholder="name@example.com" required type="email"/>
 </div>
 </div>
 {/*  Password Field  */}
@@ -71,7 +93,7 @@ export default function LearnerLoginEdupath() {
 <span className="material-symbols-outlined absolute left-3.5 text-on-surface-variant/70 select-none text-headline-sm pointer-events-none">
             lock
           </span>
-<input className="w-full pl-10 pr-10 py-2.5 bg-surface-container-low font-body-md text-body-md text-on-surface rounded-lg outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary-container transition-all placeholder:text-on-surface-variant/60" id="passwordInput" name="password" placeholder="••••••••••••" required type="password"/>
+<input value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pl-10 pr-10 py-2.5 bg-surface-container-low font-body-md text-body-md text-on-surface rounded-lg outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary-container transition-all placeholder:text-on-surface-variant/60" id="passwordInput" name="password" placeholder="••••••••••••" required type="password"/>
 <button aria-label="Toggle password visibility" className="absolute right-3 text-on-surface-variant/70 hover:text-on-surface focus:outline-none transition-colors p-1" id="passwordToggleBtn" type="button">
 <span className="material-symbols-outlined text-headline-sm select-none" id="eyeIcon">
               visibility

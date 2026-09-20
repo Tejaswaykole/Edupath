@@ -35,3 +35,15 @@ export const useGenerateLearningPath = () => {
     }
   });
 };
+
+export const useVerifySkill = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (skillId: number) => api.verifySkill(skillId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['skillGaps'] });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    }
+  });
+};
+

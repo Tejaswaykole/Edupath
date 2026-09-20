@@ -69,6 +69,15 @@ function App() {
         <Route path="/settingslearningpreferencesprivacy" element={<SettingsLearningPreferencesPrivacyEdupath />} />
         <Route path="/skillgapoverviewreadiness" element={<SkillGapOverviewReadinessEdupath />} />
         <Route path="/weeklylearningplandayschedule" element={<WeeklyLearningPlanDayScheduleEdupath />} />
+        
+        {/* Navigation Aliases */}
+        <Route path="/dashboard" element={<Navigate to="/learnerdashboardproduction" replace />} />
+        <Route path="/skillgapoverview" element={<Navigate to="/skillgapoverviewreadiness" replace />} />
+        <Route path="/progressintelligenceperformancereports" element={<Navigate to="/progressintelligencelearningconsistency" replace />} />
+        <Route path="/progressintelligence" element={<Navigate to="/progressintelligencelearningconsistency" replace />} />
+        <Route path="/mylearningworkspace" element={<Navigate to="/mylearningworkspacetodaystasks" replace />} />
+        <Route path="/practice" element={<Navigate to="/interactivepracticeworkspace" replace />} />
+        <Route path="/assessment" element={<Navigate to="/assessmentexperienceknowledgecheck" replace />} />
       </Routes>
     </BrowserRouter>
   );

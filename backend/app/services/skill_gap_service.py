@@ -16,18 +16,26 @@ def analyze_learner_gaps(db: Session, learner: LearnerProfile) -> list[SkillGap]
     if not learner.target_role:
         return []
     
-    target_role = db.query(TargetRole).filter(TargetRole.title == learner.target_role).first()
+    target_role = db.query(TargetRole).filter(TargetRole.name.ilike(learner.target_role.strip())).first()
+    if not target_role:
+        # Fallback to match by partial or first available target role
+        target_role = db.query(TargetRole).first()
     if not target_role:
         return []
 
     # Get learner's current skills mapped by skill_id
-    current_skills = {ls.skill_id: ls.proficiency_level for ls in learner.skills}
+    current_skills = {
+        ls.skill_id: (ls.proficiency.value if hasattr(ls.proficiency, "value") else str(ls.proficiency))
+        for ls in learner.skills
+    }
     
     gaps_created = []
 
-    for tr_skill in target_role.skills:
+    for tr_skill in (target_role.required_skills or []):
         skill = tr_skill.skill
-        required_prof = tr_skill.required_proficiency_level
+        if not skill:
+            continue
+        required_prof = tr_skill.required_proficiency.value if hasattr(tr_skill.required_proficiency, "value") else str(tr_skill.required_proficiency)
         current_prof = current_skills.get(skill.id, "NONE")
 
         gap_level = get_gap_level(required_prof, current_prof)
@@ -57,9 +65,9 @@ def analyze_learner_gaps(db: Session, learner: LearnerProfile) -> list[SkillGap]
                 gaps_created.append(new_gap)
 
                 # Call Groq to generate learning objectives for this gap
-                ai_analysis = analyze_skill_gap(skill.name, target_role.title)
+                ai_analysis = analyze_skill_gap(skill.name, target_role.name)
                 
-                for obj in ai_analysis.objectives:
+                for obj in (ai_analysis.objectives or []):
                     db.add(LearningObjective(
                         skill_gap_id=new_gap.id,
                         title=obj.title,

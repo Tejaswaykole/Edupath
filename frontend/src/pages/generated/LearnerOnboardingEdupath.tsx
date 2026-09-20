@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLearner } from '../../hooks/useLearner';
 
 const skillCategories = [
   {
@@ -40,8 +39,6 @@ export default function LearnerOnboardingEdupath() {
   const [otherTargetRole, setOtherTargetRole] = useState('');
   const [careerGoal, setCareerGoal] = useState('Senior role in 6 mos');
   const [learningAvailability, setLearningAvailability] = useState('1 hr/day • 5 days/wk');
-  
-  const { updateProfile } = useLearner();
 
   const toggleSkill = (skill: string) => {
     setSelectedSkills(prev => 
@@ -60,7 +57,7 @@ export default function LearnerOnboardingEdupath() {
 <div className="w-full max-w-[760px] flex flex-col items-center mb-6">
 <div className="w-full flex items-center justify-between pb-5 border-b border-surface-container">
 <div className="flex items-center gap-3">
-<img alt="EduPath" className="w-9 h-9 object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UW82HvmiPy5TMo7cU3gRwBiU3baDfcaiEOnyNASWlxwTVH0w0qIkNHoitLzMolXacL-2tGekbbOW8xuiE-cFOTqz3XSg6tMXidYpz4GWTD9ElmxSIusWHfPloyzQX4ShPK6uAbsckWXk0QAmTGvpHPR8UpvJbzypQPbEy08-huoIQrDNTtxARo_QwXykp2DRz9wjaWKAk9oBlNnhorpC0KbV5ertGX9YPXANETHdtirg"/>
+<img alt="EduPath" className="w-10 h-10 object-contain rounded-lg shadow-sm" src="/logo.png"/>
 <div className="flex flex-col">
 <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight">EduPath</span>
 <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">Diagnostic Setup Engine</span>
@@ -284,15 +281,7 @@ export default function LearnerOnboardingEdupath() {
       </button>
 <div className="flex items-center gap-3">
 <span className="font-body-sm text-body-sm text-on-surface-variant hidden sm:inline">Baseline saved</span>
-<button onClick={async () => {
-  const finalTargetRole = targetRole === 'Other' ? otherTargetRole : targetRole;
-  try {
-    await updateProfile({ target_role: finalTargetRole });
-  } catch (error) {
-    console.error('Failed to update profile, proceeding with onboarding...', error);
-  }
-  navigate('/onboardingcomplete');
-}} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm transition-all group" id="continue-btn" type="button">
+<button onClick={() => navigate('/onboardingcomplete')} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm transition-all group" id="continue-btn" type="button">
 <span>Continue to Experience Level</span>
 <span className="material-symbols-outlined text-[18px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
 </button>

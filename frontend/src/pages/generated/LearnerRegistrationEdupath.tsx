@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import client from '../../api/client';
 
 export default function LearnerRegistrationEdupath() {
   const navigate = useNavigate();
@@ -8,11 +9,45 @@ export default function LearnerRegistrationEdupath() {
   
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    login({ id: Date.now(), email: email || 'newlearner@example.com', role: 'learner', name: fullName || 'New Learner' }, 'mock-token-reg');
-    navigate('/learneronboarding');
+    setErrorMessage('');
+
+    if (password !== confirmPassword) {
+      setErrorMessage('Passwords do not match');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // 1. Register user
+      await client.post('/auth/register', {
+        email: email.trim(),
+        password,
+        role: 'LEARNER',
+        name: fullName.trim()
+      });
+
+      // 2. Automatically log in to obtain JWT
+      const loginRes = await client.post('/auth/login', {
+        email: email.trim(),
+        password
+      });
+
+      const { access_token, user } = loginRes.data;
+      login(user, access_token);
+      navigate('/learneronboarding');
+    } catch (err: any) {
+      const detail = err.response?.data?.detail || 'Registration failed. Please check your inputs.';
+      setErrorMessage(detail);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <div className="min-h-screen bg-surface">
@@ -22,8 +57,8 @@ export default function LearnerRegistrationEdupath() {
 {/*  Top Brand Header  */}
 <div className="flex flex-col items-center text-center mb-7">
 <div className="flex items-center gap-2.5 mb-3">
-<img alt="EduPath Logo Mark" className="w-9 h-9 object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UW82HvmiPy5TMo7cU3gRwBiU3baDfcaiEOnyNASWlxwTVH0w0qIkNHoitLzMolXacL-2tGekbbOW8xuiE-cFOTqz3XSg6tMXidYpz4GWTD9ElmxSIusWHfPloyzQX4ShPK6uAbsckWXk0QAmTGvpHPR8UpvJbzypQPbEy08-huoIQrDNTtxARo_QwXykp2DRz9wjaWKAk9oBlNnhorpC0KbV5ertGX9YPXANETHdtirg"/>
-<span className="font-headline-md text-headline-md tracking-tight text-on-surface">EduPath</span>
+<img alt="EduPath Logo" className="w-10 h-10 object-contain rounded-lg shadow-sm" src="/logo.png"/>
+<span className="font-headline-md text-headline-md tracking-tight text-on-surface font-bold">EduPath</span>
 </div>
 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-low text-primary mb-3">
 <span className="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
@@ -33,6 +68,11 @@ export default function LearnerRegistrationEdupath() {
 <h1 className="font-headline-lg text-headline-lg text-on-surface mb-1">Create your Learner Account</h1>
 <p className="font-body-sm text-body-sm text-on-surface-variant">Start your personalized skill journey with EduPath.</p>
 </div>
+{errorMessage && (
+  <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-700 text-sm border border-red-200">
+    {errorMessage}
+  </div>
+)}
 {/*  Registration Form  */}
 <form onSubmit={handleSubmit} className="flex flex-col gap-4" >
 {/*  Full Name Field  */}
@@ -62,7 +102,7 @@ export default function LearnerRegistrationEdupath() {
         </label>
 <div className="relative flex items-center">
 <span className="material-symbols-outlined absolute left-3 text-outline text-[18px] pointer-events-none">lock</span>
-<input className="w-full pl-9 pr-10 py-2.5 bg-surface-container-lowest rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline outline-none focus:bg-surface-bright shadow-sm transition-all" id="password" name="password" placeholder="Create password" required type="password"/>
+<input value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pl-9 pr-10 py-2.5 bg-surface-container-lowest rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline outline-none focus:bg-surface-bright shadow-sm transition-all" id="password" name="password" placeholder="Create password" required type="password"/>
 <button aria-label="Toggle password visibility" className="absolute right-3 text-outline hover:text-on-surface flex items-center justify-center p-0.5" id="togglePassword" type="button">
 <span className="material-symbols-outlined text-[18px]" id="eyeIcon">visibility</span>
 </button>
@@ -79,7 +119,7 @@ export default function LearnerRegistrationEdupath() {
         </label>
 <div className="relative flex items-center">
 <span className="material-symbols-outlined absolute left-3 text-outline text-[18px] pointer-events-none">lock_reset</span>
-<input className="w-full pl-9 pr-3.5 py-2.5 bg-surface-container-lowest rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline outline-none focus:bg-surface-bright shadow-sm transition-all" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password" required type="password"/>
+<input value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full pl-9 pr-3.5 py-2.5 bg-surface-container-lowest rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline outline-none focus:bg-surface-bright shadow-sm transition-all" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password" required type="password"/>
 </div>
 </div>
 {/*  Terms Checkbox  */}

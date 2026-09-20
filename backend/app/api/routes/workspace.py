@@ -82,6 +82,13 @@ def submit_practice(task_id: int, request: PracticeSubmissionRequest, current_us
     db.commit()
     db.refresh(attempt)
     
+    # Automatically trigger adaptive AI agent for real-time practice feedback adaptation
+    from app.api.routes.agent import _run_agent_pipeline
+    try:
+        _run_agent_pipeline(profile.id, db)
+    except Exception as e:
+        print(f"Automatic adaptive agent trigger on practice error: {e}")
+
     return attempt
 
 @router.post("/assessments/{assessment_id}/start")
@@ -144,4 +151,51 @@ def submit_assessment(attempt_id: int, request: AssessmentSubmissionRequest, cur
     
     db.commit()
     db.refresh(attempt)
+
+    # Automatically trigger adaptive LangGraph agent pipeline so assessment results immediately adapt curriculum
+    from app.api.routes.agent import _run_agent_pipeline
+    try:
+        _run_agent_pipeline(profile.id, db)
+    except Exception as e:
+        print(f"Automatic adaptive agent trigger on assessment error: {e}")
+
     return attempt
+
+@router.get("/practice/{task_id}")
+def get_practice_task(task_id: int, current_user: User = Depends(require_learner), db: Session = Depends(get_db)):
+    task = db.query(PracticeTask).filter(PracticeTask.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Practice task not found")
+    return {
+        "id": task.id,
+        "title": task.title,
+        "description": getattr(task, "instructions", task.title),
+        "instructions": task.instructions,
+        "starter_code": getattr(task, "expected_output", ""),
+        "difficulty": task.difficulty,
+        "estimated_mins": getattr(task, "estimated_duration_mins", 20)
+    }
+
+@router.get("/assessments/{assessment_id}")
+def get_assessment(assessment_id: int, current_user: User = Depends(require_learner), db: Session = Depends(get_db)):
+    assessment = db.query(Assessment).filter(Assessment.id == assessment_id).first()
+    if not assessment:
+        raise HTTPException(status_code=404, detail="Assessment not found")
+    
+    questions = db.query(AssessmentQuestion).filter(AssessmentQuestion.assessment_id == assessment_id).order_by(AssessmentQuestion.id).all()
+    
+    return {
+        "id": assessment.id,
+        "title": assessment.title,
+        "description": assessment.description,
+        "questions": [
+            {
+                "id": q.id,
+                "content": q.content,
+                "question_text": q.content,
+                "options": q.options,
+                "question_type": q.question_type
+            }
+            for q in questions
+        ]
+    }

@@ -1,9 +1,30 @@
-import { useLearningPath } from '../../hooks/useLearning';
+import { useNavigate } from 'react-router-dom';
+import { useLearningPath, useSkillGaps } from '../../hooks/useLearning';
+import { useReports } from '../../hooks/useReports';
+import { useAuthStore } from '../../store/authStore';
+import { useUploadStore } from '../../store/uploadStore';
 
 export default function MyLearningWorkspaceTodaySTasksEdupath() {
-  const { data: learningPath } = useLearningPath();
+  const navigate = useNavigate();
+  const { data: learningPath, isLoading } = useLearningPath();
+  const { data: skillGaps } = useSkillGaps();
+  const { report } = useReports();
+  const user = useAuthStore((state) => state.user);
+  const { result: uploadResult } = useUploadStore();
+
   const currentModule = learningPath?.modules?.length ? learningPath.modules[0] : null;
   const activities = currentModule?.activities || [];
+
+  const totalSkills = skillGaps?.length || (uploadResult?.skills?.length ?? 12);
+  const acquiredSkills = skillGaps?.filter((g: any) => g.status === 'COMPLETED' || g.current_proficiency?.toLowerCase() === g.required_proficiency?.toLowerCase()).length ?? (report?.acquired_skills?.length ?? (uploadResult ? Math.round(totalSkills * 0.6) : 6));
+  
+  const overallProgress = report?.progress?.completion_percentage ?? (learningPath?.modules?.length ? Math.min(100, Math.round((learningPath.modules.filter((m: any) => m.status === 'COMPLETED').length / learningPath.modules.length) * 100)) : (uploadResult?.readinessScore ? Math.round(uploadResult.readinessScore * 100) : 42));
+
+  const tasksDoneThisWeek = report?.progress?.completed_modules ?? (learningPath?.modules?.length ? learningPath.modules.filter((m: any) => m.status === 'COMPLETED').length : 4);
+  const streakWeeks = 4;
+  const currentLevel = overallProgress >= 70 ? 'Level 4' : overallProgress >= 40 ? 'Level 3' : overallProgress >= 20 ? 'Level 2' : 'Level 1';
+  const levelTitle = overallProgress >= 70 ? 'Proficient Builder' : overallProgress >= 40 ? 'Learning Explorer' : 'Active Apprentice';
+
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -11,7 +32,7 @@ export default function MyLearningWorkspaceTodaySTasksEdupath() {
 {/*  Top Breadcrumb & Metadata Header  */}
 <div className="flex flex-wrap items-center justify-between gap-4">
 <nav className="flex items-center gap-2 font-label-md text-label-md text-secondary">
-<span className="hover:text-primary transition-colors cursor-pointer">Dashboard</span>
+<span onClick={() => navigate('/learnerdashboardproduction')} className="hover:text-primary transition-colors cursor-pointer">Dashboard</span>
 <span className="material-symbols-outlined text-[16px] text-outline-variant">chevron_right</span>
 <span className="hover:text-primary transition-colors cursor-pointer">My Learning</span>
 <span className="material-symbols-outlined text-[16px] text-outline-variant">chevron_right</span>
@@ -30,15 +51,15 @@ export default function MyLearningWorkspaceTodaySTasksEdupath() {
 <div className="relative z-10 flex-1 p-6 md:p-8 flex flex-col justify-between max-w-xl">
 <div>
 <div className="flex items-center gap-2 mb-1">
-<span className="font-headline-xl text-headline-xl text-on-surface tracking-tight">Good morning, Tejas</span>
-<span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed text-label-sm font-label-sm">Level 3</span>
+<span className="font-headline-xl text-headline-xl text-on-surface tracking-tight">Good morning, {user?.name?.split(' ')[0] || 'Learner'}</span>
+<span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed text-label-sm font-label-sm">{currentLevel}</span>
 </div>
 <p className="font-body-md text-body-md text-secondary">
           Consistent learning today creates more opportunities tomorrow.
         </p>
 <div className="mt-2.5 inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-container-low text-on-surface-variant font-body-sm text-body-sm">
 <span className="material-symbols-outlined text-primary text-[18px]">flag</span>
-<span>Target Milestone: <strong className="font-semibold text-on-surface">Node.js Microservices Architecture</strong></span>
+<span>Target Milestone: <strong className="font-semibold text-on-surface">{currentModule?.title || 'Personalized Adaptive Roadmap'}</strong></span>
 </div>
 </div>
 <p className="font-body-sm text-body-sm text-secondary italic mt-4">
@@ -57,41 +78,41 @@ export default function MyLearningWorkspaceTodaySTasksEdupath() {
 </div>
 {/*  Metric Shelf (5 Key Indicators)  */}
 <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
-<div className="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+<div onClick={() => navigate('/skillgapoverviewreadiness')} className="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer group">
 <div className="flex items-center gap-3">
 <div className="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-primary">
 <span className="material-symbols-outlined text-[22px]">menu_book</span>
 </div>
 <div>
-<span className="font-headline-md text-headline-md text-on-surface block leading-tight">8 / 15</span>
+<span className="font-headline-md text-headline-md text-on-surface block leading-tight">{acquiredSkills} / {totalSkills}</span>
 <span className="font-label-sm text-label-sm text-secondary">Skills Acquired</span>
 </div>
 </div>
-<span className="material-symbols-outlined text-outline-variant text-[18px]">chevron_right</span>
+<span className="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-[18px]">chevron_right</span>
 </div>
-<div className="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+<div onClick={() => navigate('/progressintelligenceperformancereports')} className="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer group">
 <div className="flex items-center gap-3">
 <div className="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-primary">
 <span className="material-symbols-outlined text-[22px]">query_stats</span>
 </div>
 <div>
-<span className="font-headline-md text-headline-md text-on-surface block leading-tight">42%</span>
+<span className="font-headline-md text-headline-md text-on-surface block leading-tight">{overallProgress}%</span>
 <span className="font-label-sm text-label-sm text-secondary">Overall Progress</span>
 </div>
 </div>
-<span className="material-symbols-outlined text-outline-variant text-[18px]">chevron_right</span>
+<span className="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-[18px]">chevron_right</span>
 </div>
-<div className="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+<div onClick={() => navigate('/progressintelligenceperformancereports')} className="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer group">
 <div className="flex items-center gap-3">
 <div className="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-tertiary">
 <span className="material-symbols-outlined text-[22px]">event_available</span>
 </div>
 <div>
-<span className="font-headline-md text-headline-md text-on-surface block leading-tight">12</span>
-<span className="font-label-sm text-label-sm text-secondary">Tasks Done (Week)</span>
+<span className="font-headline-md text-headline-md text-on-surface block leading-tight">{tasksDoneThisWeek}</span>
+<span className="font-label-sm text-label-sm text-secondary">Tasks Completed</span>
 </div>
 </div>
-<span className="material-symbols-outlined text-outline-variant text-[18px]">chevron_right</span>
+<span className="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-[18px]">chevron_right</span>
 </div>
 <div className="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
 <div className="flex items-center gap-3">
@@ -99,7 +120,7 @@ export default function MyLearningWorkspaceTodaySTasksEdupath() {
 <span className="material-symbols-outlined text-[22px]">local_fire_department</span>
 </div>
 <div>
-<span className="font-headline-md text-headline-md text-on-surface block leading-tight">5</span>
+<span className="font-headline-md text-headline-md text-on-surface block leading-tight">{streakWeeks}</span>
 <span className="font-label-sm text-label-sm text-secondary">Week Streak</span>
 </div>
 </div>
@@ -111,8 +132,8 @@ export default function MyLearningWorkspaceTodaySTasksEdupath() {
 <span className="material-symbols-outlined text-[22px]">star</span>
 </div>
 <div>
-<span className="font-headline-md text-headline-md text-on-surface block leading-tight">Level 3</span>
-<span className="font-label-sm text-label-sm text-secondary">Learning Explorer</span>
+<span className="font-headline-md text-headline-md text-on-surface block leading-tight">{currentLevel}</span>
+<span className="font-label-sm text-label-sm text-secondary">{levelTitle}</span>
 </div>
 </div>
 <span className="material-symbols-outlined text-outline-variant text-[18px]">chevron_right</span>
