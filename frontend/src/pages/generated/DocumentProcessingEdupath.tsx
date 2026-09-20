@@ -1,5 +1,17 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
 
 export default function DocumentProcessingEdupath() {
+  const user = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate('/aianalysisresultreview');
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [navigate]);
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -13,7 +25,7 @@ export default function DocumentProcessingEdupath() {
           Career Documents
         </a>
 <span className="material-symbols-outlined text-[16px] text-outline-variant">chevron_right</span>
-<span className="font-label-md text-label-md text-on-surface font-semibold">Tejas_Patil_FullStack_Resume_2025.pdf</span>
+<span className="font-label-md text-label-md text-on-surface font-semibold">{user?.name?.replace(/\s+/g, '_') || 'Learner'}_Resume.pdf</span>
 </div>
 <div className="flex items-center gap-space-sm">
 <span className="inline-flex items-center gap-1.5 px-space-md py-1 rounded-full bg-secondary-container text-on-secondary-fixed text-label-sm font-label-sm">
@@ -48,7 +60,7 @@ export default function DocumentProcessingEdupath() {
 <div className="flex items-center gap-space-xs self-start md:self-auto bg-surface-container-low px-space-md py-space-sm rounded-xl">
 <span className="material-symbols-outlined text-secondary text-[20px]">picture_as_pdf</span>
 <div className="flex flex-col">
-<span className="font-label-sm text-label-sm text-on-surface truncate max-w-[190px]">Tejas_Patil_FullStack_Resume...</span>
+<span className="font-label-sm text-label-sm text-on-surface truncate max-w-[190px]">{user?.name?.split(' ')[0] || 'Learner'}_Resume...</span>
 <span className="font-label-sm text-label-sm text-secondary font-normal">1.4 MB • Uploaded 18s ago</span>
 </div>
 </div>
@@ -253,9 +265,9 @@ export default function DocumentProcessingEdupath() {
 <button className="px-space-lg py-2.5 rounded-xl font-label-md text-label-md text-secondary hover:text-on-surface hover:bg-surface-container-low transition-all" type="button">
               Cancel Analysis
             </button>
-<button className="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-all shadow-sm" type="button">
-<span>Run in Background</span>
-<span className="material-symbols-outlined text-[18px]">notifications_active</span>
+<button onClick={() => navigate('/aianalysisresultreview')} className="inline-flex items-center gap-space-xs px-space-lg py-2.5 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-all shadow-sm" type="button">
+<span>Continue to Review</span>
+<span className="material-symbols-outlined text-[18px]">arrow_forward</span>
 </button>
 </div>
 </div>

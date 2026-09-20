@@ -22,14 +22,14 @@ export default function LandingPageEdupath() {
 <nav className="hidden md:flex items-center space-x-8">
 <a className="font-body-md text-body-md text-secondary hover:text-on-surface transition-colors" href="#how-it-works">How It Works</a>
 <a className="font-body-md text-body-md text-secondary hover:text-on-surface transition-colors" href="#skills">Skills &amp; Roles</a>
-<a className="font-body-md text-body-md text-secondary hover:text-on-surface transition-colors" href="#mentors">For Mentors</a>
-<a className="font-body-md text-body-md text-secondary hover:text-on-surface transition-colors" href="#platform">Platform Engine</a>
+<a className="font-body-md text-body-md text-secondary hover:text-on-surface transition-colors cursor-pointer" onClick={(e) => { e.preventDefault(); navigate('/learnerlogin'); }}>For Mentors</a>
+<a className="font-body-md text-body-md text-secondary hover:text-on-surface transition-colors cursor-pointer" onClick={(e) => { e.preventDefault(); navigate('/roleselection'); }}>Platform Engine</a>
 </nav>
 <div className="flex items-center space-x-3">
-<button onClick={() => navigate('/learnerloginedupath')} className="px-4 py-2 font-label-md text-label-md text-on-surface bg-surface-container-lowest hover:bg-surface-container-low rounded-lg transition-colors shadow-sm">
+<button onClick={() => navigate('/learnerlogin')} className="px-4 py-2 font-label-md text-label-md text-on-surface bg-surface-container-lowest hover:bg-surface-container-low rounded-lg transition-colors shadow-sm">
           Sign In
         </button>
-<button onClick={() => navigate('/roleselectionedupath')} className="px-5 py-2 font-label-md text-label-md text-on-primary bg-primary-container hover:bg-primary rounded-lg transition-all shadow-sm flex items-center space-x-2">
+<button onClick={() => navigate('/roleselection')} className="px-5 py-2 font-label-md text-label-md text-on-primary bg-primary-container hover:bg-primary rounded-lg transition-all shadow-sm flex items-center space-x-2">
 <span>Get Started</span>
 <span className="material-symbols-outlined text-sm leading-none">arrow_forward</span>
 </button>
@@ -54,11 +54,11 @@ export default function LandingPageEdupath() {
       </p>
 {/*  CTA Row  */}
 <div className="flex flex-wrap items-center justify-center gap-3.5 mb-14">
-<button className="px-6 py-3 font-label-md text-label-md text-on-primary bg-primary-container hover:bg-primary rounded-lg transition-all shadow-md flex items-center space-x-2">
+<button onClick={() => navigate('/roleselection')} className="px-6 py-3 font-label-md text-label-md text-on-primary bg-primary-container hover:bg-primary rounded-lg transition-all shadow-md flex items-center space-x-2">
 <span>Get Started Today</span>
 <span className="material-symbols-outlined text-sm leading-none">arrow_forward</span>
 </button>
-<button className="px-6 py-3 font-label-md text-label-md text-on-surface bg-surface-container-lowest hover:bg-surface-container-low rounded-lg transition-colors shadow-sm flex items-center space-x-2">
+<button onClick={() => navigate('/interactivepracticeworkspace')} className="px-6 py-3 font-label-md text-label-md text-on-surface bg-surface-container-lowest hover:bg-surface-container-low rounded-lg transition-colors shadow-sm flex items-center space-x-2">
 <span className="material-symbols-outlined text-sm text-secondary">explore</span>
 <span>Explore Sandbox</span>
 </button>

@@ -1,7 +1,7 @@
 import { useSettings } from '../../hooks/useSettings';
 
 export default function SettingsLearningPreferencesPrivacyEdupath() {
-  const { isUpdating } = useSettings();
+  const { settings, isUpdating } = useSettings();
 
   return (
     <div className="min-h-screen bg-surface">
@@ -94,7 +94,7 @@ export default function SettingsLearningPreferencesPrivacyEdupath() {
 <span>Weekly Study Budget &amp; Velocity Guard</span>
 <span className="material-symbols-outlined text-[16px] text-outline cursor-help" title="Governs max sprint allocation per week">info</span>
 </label>
-<span className="font-headline-sm text-headline-sm text-primary font-bold">7.5 hrs / week <span className="font-body-sm text-body-sm text-secondary font-normal">(1.5 hrs/day, Mon–Fri)</span></span>
+<span className="font-headline-sm text-headline-sm text-primary font-bold">{settings?.preferred_study_schedule || '7.5 hrs / week'}</span>
 </div>
 {/*  Custom Slider Track Representation  */}
 <div className="flex flex-col gap-2 pt-2">
@@ -226,7 +226,7 @@ export default function SettingsLearningPreferencesPrivacyEdupath() {
 <div className="p-4 rounded-xl bg-surface-container-low flex flex-col gap-3">
 <div className="flex items-center gap-2 text-primary">
 <span className="material-symbols-outlined text-[18px]">lock</span>
-<span className="font-label-md text-label-md font-semibold">Strictly Private (Zero-Spill Enforced)</span>
+<span className="font-label-md text-label-md font-semibold">Strictly Private (Zero-Spill Enforced) {settings?.is_private ? '[ON]' : '[OFF]'}</span>
 </div>
 <ul className="flex flex-col gap-2 font-body-sm text-body-sm text-on-surface-variant">
 <li className="flex items-center gap-2">

@@ -1,5 +1,7 @@
+import { useNavigate } from 'react-router-dom';
 
 export default function AnalysisConfirmedEdupath() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -19,11 +21,11 @@ export default function AnalysisConfirmedEdupath() {
         </p>
 </div>
 <div className="flex flex-wrap items-center gap-space-sm shrink-0">
-<button className="inline-flex items-center gap-2 px-space-lg py-3 rounded-xl bg-surface-container-lowest text-primary font-label-md text-label-md shadow-md hover:bg-surface-container-low transition-all" type="button">
+<button onClick={() => navigate('/learnerprofile')} className="inline-flex items-center gap-2 px-space-lg py-3 rounded-xl bg-surface-container-lowest text-primary font-label-md text-label-md shadow-md hover:bg-surface-container-low transition-all cursor-pointer" type="button">
 <span>View Full Profile</span>
 <span className="material-symbols-outlined text-[18px]">visibility</span>
 </button>
-<button className="inline-flex items-center gap-2 px-space-lg py-3 rounded-xl bg-tertiary-fixed text-on-tertiary-fixed font-label-md text-label-md shadow-md hover:opacity-90 transition-all" id="launchAnalysisBtn" type="button">
+<button onClick={() => navigate('/skillgapoverviewreadiness')} className="inline-flex items-center gap-2 px-space-lg py-3 rounded-xl bg-tertiary-fixed text-on-tertiary-fixed font-label-md text-label-md shadow-md hover:opacity-90 transition-all cursor-pointer" id="launchAnalysisBtn" type="button">
 <span>Analyze My Skill Gaps</span>
 <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
 </button>
@@ -132,7 +134,7 @@ export default function AnalysisConfirmedEdupath() {
 <span className="material-symbols-outlined text-primary text-[20px]">auto_awesome</span>
 <span className="font-body-sm text-body-sm text-on-surface font-medium">Estimated benchmark run-time: ~18 seconds</span>
 </div>
-<button className="inline-flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors" type="button">
+<button onClick={() => navigate('/skillgapoverviewreadiness')} className="inline-flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors cursor-pointer" type="button">
 <span>Start Live Comparison</span>
 <span className="material-symbols-outlined text-[16px]">chevron_right</span>
 </button>

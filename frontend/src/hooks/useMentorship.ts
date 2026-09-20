@@ -14,6 +14,14 @@ export const useMentorship = () => {
     queryFn: mentorshipApi.getActiveMentorships,
   });
 
+  const useGuidance = (mentorshipId: number) => {
+    return useQuery({
+      queryKey: ['mentorship', 'guidance', mentorshipId],
+      queryFn: () => mentorshipApi.getGuidance(mentorshipId),
+      enabled: !!mentorshipId,
+    });
+  };
+
   const createRequestMutation = useMutation({
     mutationFn: (request: MentorshipRequestCreate) => mentorshipApi.createRequest(request),
     onSuccess: () => {
@@ -41,6 +49,7 @@ export const useMentorship = () => {
     isLoadingMentors,
     activeMentorships,
     isLoadingActiveMentorships,
+    useGuidance,
     createRequest: createRequestMutation.mutate,
     isCreatingRequest: createRequestMutation.isPending,
     updateRequest: updateRequestMutation.mutate,

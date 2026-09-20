@@ -1,5 +1,7 @@
+import { useNavigate } from 'react-router-dom';
 
 export default function AiAnalysisResultReviewEdupath() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -454,7 +456,7 @@ export default function AiAnalysisResultReviewEdupath() {
 <div className="sticky bottom-4 z-30 w-full mt-space-md">
 <div className="bg-surface-container-lowest/95 backdrop-blur-md rounded-xl p-space-md shadow-xl flex flex-col sm:flex-row items-center justify-between gap-space-md">
 <div className="flex items-center gap-space-md w-full sm:w-auto justify-between sm:justify-start">
-<button className="flex items-center gap-space-xs px-space-md py-space-sm rounded-xl text-secondary hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" type="button">
+<button onClick={() => navigate('/documentcenterresumeupload')} className="flex items-center gap-space-xs px-space-md py-space-sm rounded-xl text-secondary hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" type="button">
 <span className="material-symbols-outlined text-[18px]">arrow_back</span>
 <span>Back to Documents</span>
 </button>
@@ -464,7 +466,7 @@ export default function AiAnalysisResultReviewEdupath() {
 </div>
 <div className="flex items-center gap-space-sm w-full sm:w-auto justify-end">
 <span className="hidden md:inline font-body-sm text-body-sm text-secondary mr-space-xs">All changes automatically saved</span>
-<button className="w-full sm:w-auto flex items-center justify-center gap-space-sm px-space-xl py-space-sm rounded-xl bg-primary hover:bg-primary-container text-on-primary font-headline-sm text-headline-sm shadow-md hover:shadow-lg transition-all" id="confirmDataBtn" type="button">
+<button onClick={() => navigate('/analysisconfirmed')} className="w-full sm:w-auto flex items-center justify-center gap-space-sm px-space-xl py-space-sm rounded-xl bg-primary hover:bg-primary-container text-on-primary font-headline-sm text-headline-sm shadow-md hover:shadow-lg transition-all" id="confirmDataBtn" type="button">
 <span>Save &amp; Confirm Information</span>
 <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
 </button>

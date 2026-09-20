@@ -1,5 +1,9 @@
+import { useLearningPath } from '../../hooks/useLearning';
 
 export default function MyLearningWorkspaceTodaySTasksEdupath() {
+  const { data: learningPath, isLoading } = useLearningPath();
+  const currentModule = learningPath?.modules?.length ? learningPath.modules[0] : null;
+  const activities = currentModule?.activities || [];
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -127,10 +131,10 @@ export default function MyLearningWorkspaceTodaySTasksEdupath() {
 <span className="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant">Prerequisite for PostgreSQL Schema</span>
 </div>
 <h2 className="font-headline-lg text-headline-lg text-on-surface mt-1 tracking-tight">
-          Build REST APIs with Node.js &amp; Express 5.x
+          {currentModule?.title || 'Build REST APIs with Node.js & Express 5.x'}
         </h2>
 <p className="font-body-md text-body-md text-secondary mt-0.5">
-          Master middleware pipelines, structured HTTP error handling, JWT-based route guarding, and modular router design.
+          {currentModule?.description || 'Master middleware pipelines, structured HTTP error handling, JWT-based route guarding, and modular router design.'}
         </p>
 </div>
 </div>
@@ -170,96 +174,48 @@ export default function MyLearningWorkspaceTodaySTasksEdupath() {
 </div>
 {/*  Learning Activity List Items  */}
 <div className="flex flex-col gap-3">
-{/*  Item 1: Completed  */}
-<div className="p-4 rounded-xl bg-surface-container-lowest hover:bg-surface-container-low transition-colors shadow-sm flex items-center justify-between gap-4">
-<div className="flex items-center gap-3.5 min-w-0">
-<span className="w-6 h-6 rounded-full bg-tertiary text-white flex items-center justify-center font-label-sm text-label-sm font-bold shrink-0">1</span>
-<div className="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-secondary shrink-0">
-<span className="material-symbols-outlined text-[20px]">smart_display</span>
-</div>
-<div className="min-w-0">
-<div className="flex items-center gap-2">
-<span className="font-label-sm text-label-sm px-1.5 py-0.2 rounded bg-surface-container text-secondary">Video</span>
-<p className="font-headline-sm text-headline-sm text-on-surface line-through opacity-75 truncate">
-                    Watch: REST API Fundamentals &amp; Event Loop
-                  </p>
-</div>
-<span className="font-body-sm text-body-sm text-secondary">15 min duration • Completed today at 09:15 AM</span>
-</div>
-</div>
-<div className="flex items-center gap-2 shrink-0">
-<span className="px-2.5 py-1 rounded-full bg-surface-container-low text-tertiary font-label-sm text-label-sm font-semibold flex items-center gap-1">
-<span className="material-symbols-outlined text-[16px]">check_circle</span>
-                Done
-              </span>
-</div>
-</div>
-{/*  Item 2: In Progress (Active)  */}
-<div className="p-4 rounded-xl bg-surface-container-lowest ring-2 ring-primary-container/20 shadow-md flex items-center justify-between gap-4">
-<div className="flex items-center gap-3.5 min-w-0">
-<span className="w-6 h-6 rounded-full bg-primary-container text-white flex items-center justify-center font-label-sm text-label-sm font-bold shrink-0">2</span>
-<div className="w-9 h-9 rounded-lg bg-surface-container text-primary-container flex items-center justify-center shrink-0">
-<span className="material-symbols-outlined text-[20px]">code</span>
-</div>
-<div className="min-w-0">
-<div className="flex items-center gap-2">
-<span className="font-label-sm text-label-sm px-1.5 py-0.2 rounded bg-primary-container/10 text-primary font-semibold">Article &amp; Code</span>
-<p className="font-headline-sm text-headline-sm text-on-surface font-bold truncate">
-                    REST API Routing &amp; Controller Middleware
-                  </p>
-</div>
-<span className="font-body-sm text-body-sm text-secondary">25 min remaining • Section 3: Nested router handlers</span>
-</div>
-</div>
-<div className="flex items-center gap-2 shrink-0">
-<button className="px-4 py-2 rounded-lg bg-primary-container hover:bg-primary text-white font-label-md text-label-md font-semibold flex items-center gap-1.5 shadow-sm transition-all">
-<span>Resume</span>
-<span className="material-symbols-outlined text-[16px]">play_arrow</span>
-</button>
-</div>
-</div>
-{/*  Item 3: Upcoming  */}
-<div className="p-4 rounded-xl bg-surface-container-lowest hover:bg-surface-container-low transition-colors shadow-sm flex items-center justify-between gap-4 opacity-90">
-<div className="flex items-center gap-3.5 min-w-0">
-<span className="w-6 h-6 rounded-full bg-surface-container-high text-secondary flex items-center justify-center font-label-sm text-label-sm font-bold shrink-0">3</span>
-<div className="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-secondary shrink-0">
-<span className="material-symbols-outlined text-[20px]">integration_instructions</span>
-</div>
-<div className="min-w-0">
-<div className="flex items-center gap-2">
-<span className="font-label-sm text-label-sm px-1.5 py-0.2 rounded bg-surface-container text-secondary">Hands-on Lab</span>
-<p className="font-headline-sm text-headline-sm text-on-surface truncate">
-                    Complete Express Router Practice Task
-                  </p>
-</div>
-<span className="font-body-sm text-body-sm text-secondary">30 min estimated • Interactive Cloud IDE Sandbox</span>
-</div>
-</div>
-<div className="flex items-center gap-2 shrink-0">
-<span className="px-2.5 py-1 rounded-full bg-surface-container-low text-secondary font-label-sm text-label-sm">Next Up</span>
-</div>
-</div>
-{/*  Item 4: Upcoming Queued  */}
-<div className="p-4 rounded-xl bg-surface-container-lowest hover:bg-surface-container-low transition-colors shadow-sm flex items-center justify-between gap-4 opacity-80">
-<div className="flex items-center gap-3.5 min-w-0">
-<span className="w-6 h-6 rounded-full bg-surface-container-high text-secondary flex items-center justify-center font-label-sm text-label-sm font-bold shrink-0">4</span>
-<div className="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-secondary shrink-0">
-<span className="material-symbols-outlined text-[20px]">quiz</span>
-</div>
-<div className="min-w-0">
-<div className="flex items-center gap-2">
-<span className="font-label-sm text-label-sm px-1.5 py-0.2 rounded bg-surface-container text-secondary">Knowledge Check</span>
-<p className="font-headline-sm text-headline-sm text-on-surface truncate">
-                    Take 10-question API Routing Assessment
-                  </p>
-</div>
-<span className="font-body-sm text-body-sm text-secondary">15 min duration • 80% score required to advance</span>
-</div>
-</div>
-<div className="flex items-center gap-2 shrink-0">
-<span className="px-2.5 py-1 rounded-full bg-surface-container-low text-secondary font-label-sm text-label-sm">Queued</span>
-</div>
-</div>
+{activities.map((activity: any, idx: number) => (
+  <div key={activity.id} className="p-4 rounded-xl bg-surface-container-lowest hover:bg-surface-container-low transition-colors shadow-sm flex items-center justify-between gap-4">
+    <div className="flex items-center gap-3.5 min-w-0">
+      <span className={`w-6 h-6 rounded-full flex items-center justify-center font-label-sm text-label-sm font-bold shrink-0 ${idx === 0 ? 'bg-tertiary text-white' : idx === 1 ? 'bg-primary-container text-white' : 'bg-surface-container-high text-secondary'}`}>
+        {idx + 1}
+      </span>
+      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${idx === 1 ? 'bg-surface-container text-primary-container' : 'bg-surface-container text-secondary'}`}>
+        <span className="material-symbols-outlined text-[20px]">
+          {activity.activity_type === 'VIDEO' ? 'smart_display' : activity.activity_type === 'LAB' ? 'code' : 'menu_book'}
+        </span>
+      </div>
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <span className={`font-label-sm text-label-sm px-1.5 py-0.2 rounded ${idx === 1 ? 'bg-primary-container/10 text-primary font-semibold' : 'bg-surface-container text-secondary'}`}>
+            {activity.activity_type}
+          </span>
+          <p className={`font-headline-sm text-headline-sm text-on-surface truncate ${idx === 0 ? 'line-through opacity-75' : idx === 1 ? 'font-bold' : ''}`}>
+            {activity.title}
+          </p>
+        </div>
+        <span className="font-body-sm text-body-sm text-secondary">
+          {activity.estimated_duration_mins} min estimated
+        </span>
+      </div>
+    </div>
+    <div className="flex items-center gap-2 shrink-0">
+      {idx === 0 ? (
+        <span className="px-2.5 py-1 rounded-full bg-surface-container-low text-tertiary font-label-sm text-label-sm font-semibold flex items-center gap-1">
+          <span className="material-symbols-outlined text-[16px]">check_circle</span>
+          Done
+        </span>
+      ) : idx === 1 ? (
+        <button className="px-4 py-2 rounded-lg bg-primary-container hover:bg-primary text-white font-label-md text-label-md font-semibold flex items-center gap-1.5 shadow-sm transition-all">
+          <span>Resume</span>
+          <span className="material-symbols-outlined text-[16px]">play_arrow</span>
+        </button>
+      ) : (
+        <span className="px-2.5 py-1 rounded-full bg-surface-container-low text-secondary font-label-sm text-label-sm">Next Up</span>
+      )}
+    </div>
+  </div>
+))}
 </div>
 {/*  Main Card CTA Row  */}
 <div className="flex flex-wrap items-center gap-3 pt-2">

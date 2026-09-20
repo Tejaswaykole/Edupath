@@ -1,5 +1,15 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function DocumentCenterResumeUploadEdupath() {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const navigate = useNavigate();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -41,7 +51,7 @@ export default function DocumentCenterResumeUploadEdupath() {
 <span className="inline-flex items-center self-start sm:self-auto font-label-sm text-label-sm px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed-variant">AI Pipeline v3.2</span>
 </div>
 <div className="relative group cursor-pointer rounded-xl bg-surface-container-low/60 hover:bg-surface-container-low transition-all duration-200 p-space-xl text-center flex flex-col items-center justify-center min-h-[170px]" id="drop-zone">
-<input accept=".pdf,.docx" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" id="resume-file-input" type="file"/>
+<input accept=".pdf,.docx" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" id="resume-file-input" type="file" onChange={handleFileChange} />
 <div className="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center text-primary mb-space-sm group-hover:scale-105 transition-transform">
 <span className="material-symbols-outlined text-[26px]">cloud_upload</span>
 </div>
@@ -50,6 +60,7 @@ export default function DocumentCenterResumeUploadEdupath() {
 </p>
 <p className="font-body-sm text-body-sm text-secondary mt-1">Supported formats: PDF, DOCX (Max 10MB)</p>
 </div>
+{selectedFile && (
 <div className="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
 <div className="flex items-center gap-space-md min-w-0">
 <div className="w-11 h-11 rounded-xl bg-surface-container flex items-center justify-center text-primary shrink-0">
@@ -57,8 +68,8 @@ export default function DocumentCenterResumeUploadEdupath() {
 </div>
 <div className="flex flex-col min-w-0">
 <div className="flex items-center gap-space-xs truncate">
-<span className="font-label-md text-label-md text-on-surface truncate">Tejas_Patil_FullStack_Resume_2025.pdf</span>
-<span className="font-label-sm text-label-sm text-secondary shrink-0">• 1.8 MB</span>
+<span className="font-label-md text-label-md text-on-surface truncate">{selectedFile.name}</span>
+<span className="font-label-sm text-label-sm text-secondary shrink-0">• {(selectedFile.size / 1024 / 1024).toFixed(1)} MB</span>
 </div>
 <div className="flex items-center gap-space-xs mt-1">
 <span className="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></span>
@@ -67,18 +78,19 @@ export default function DocumentCenterResumeUploadEdupath() {
 </div>
 </div>
 <div className="flex items-center gap-space-xs shrink-0 self-end sm:self-auto">
-<button className="flex items-center gap-space-xs px-space-md py-space-sm rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-sm transition-all hover:translate-y-[-1px]"  type="button">
+<button onClick={() => navigate('/documentprocessing')} className="flex items-center gap-space-xs px-space-md py-space-sm rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-sm transition-all hover:translate-y-[-1px]"  type="button">
 <span>Analyze Resume</span>
 <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
 </button>
-<button className="p-space-sm rounded-xl text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors" title="Replace file" type="button">
+<button onClick={() => document.getElementById('resume-file-input')?.click()} className="p-space-sm rounded-xl text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors" title="Replace file" type="button">
 <span className="material-symbols-outlined text-[20px]">sync</span>
 </button>
-<button className="p-space-sm rounded-xl text-secondary hover:bg-surface-container-low hover:text-error transition-colors" title="Remove file" type="button">
+<button onClick={() => setSelectedFile(null)} className="p-space-sm rounded-xl text-secondary hover:bg-surface-container-low hover:text-error transition-colors" title="Remove file" type="button">
 <span className="material-symbols-outlined text-[20px]">delete</span>
 </button>
 </div>
 </div>
+)}
 <div className="hidden flex-col gap-space-xs p-space-md rounded-xl bg-surface-container-low transition-all" id="parsing-progress">
 <div className="flex items-center justify-between font-label-sm text-label-sm">
 <span className="text-primary font-semibold flex items-center gap-space-xs">

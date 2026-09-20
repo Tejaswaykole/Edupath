@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
@@ -6,10 +6,13 @@ export default function MentorRegistrationEdupath() {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
 
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login({ id: 3, email: 'mentor@example.com', role: 'mentor', name: 'New Mentor' }, 'mock-token-mentor');
-    navigate('/mentoroverviewrequestreviewedupath');
+    login({ id: Date.now(), email: email || 'mentor@example.com', role: 'mentor', name: fullName || 'New Mentor' }, 'mock-token-mentor');
+    navigate('/mentoroverviewrequestreview');
   };
   return (
     <div className="min-h-screen bg-surface">
@@ -34,7 +37,7 @@ export default function MentorRegistrationEdupath() {
 <span>Role: Mentor</span>
 </div>
 <span className="text-outline text-[12px]">•</span>
-<button type="button" onClick={() => navigate('/roleselectionedupath')} className="font-label-sm text-label-sm text-primary font-semibold hover:underline">Switch to Learner</button>
+<button type="button" onClick={() => navigate('/roleselection')} className="font-label-sm text-label-sm text-primary font-semibold hover:underline">Switch to Learner</button>
 </div>
 <h1 className="font-headline-xl text-headline-xl text-on-surface mb-2 tracking-tight">Create your Mentor Account</h1>
 <p className="font-body-md text-body-md text-on-surface-variant max-w-sm">Guide future engineers and share your domain expertise on EduPath.</p>
@@ -46,7 +49,7 @@ export default function MentorRegistrationEdupath() {
 <label className="block font-label-md text-label-md text-on-surface mb-1.5" htmlFor="fullname">Full Name</label>
 <div className="relative flex items-center">
 <span className="material-symbols-outlined absolute left-3.5 text-outline text-[20px] pointer-events-none">person</span>
-<input className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-surface-container-low font-body-md text-body-md text-on-surface placeholder:text-outline focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container transition-all" id="fullname" placeholder="e.g. Dr. Alex Mercer" required type="text"/>
+<input value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-surface-container-low font-body-md text-body-md text-on-surface placeholder:text-outline focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container transition-all" id="fullname" placeholder="e.g. Dr. Alex Mercer" required type="text"/>
 </div>
 </div>
 {/*  Professional Email  */}
@@ -54,7 +57,7 @@ export default function MentorRegistrationEdupath() {
 <label className="block font-label-md text-label-md text-on-surface mb-1.5" htmlFor="email">Professional Email</label>
 <div className="relative flex items-center">
 <span className="material-symbols-outlined absolute left-3.5 text-outline text-[20px] pointer-events-none">mail</span>
-<input className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-surface-container-low font-body-md text-body-md text-on-surface placeholder:text-outline focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container transition-all" id="email" placeholder="alex@company.com" required type="email"/>
+<input value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-surface-container-low font-body-md text-body-md text-on-surface placeholder:text-outline focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container transition-all" id="email" placeholder="alex@company.com" required type="email"/>
 </div>
 </div>
 {/*  Password with Eye Toggle  */}
@@ -142,7 +145,7 @@ export default function MentorRegistrationEdupath() {
 <div className="text-center pt-6 mt-6 bg-surface-container-low/50 rounded-lg p-3">
 <p className="font-body-sm text-body-sm text-on-surface-variant">
         Already registered as a mentor?
-        <button type="button" onClick={() => navigate('/learnerloginedupath')} className="text-primary font-semibold hover:underline ml-1">Sign In</button>
+        <button type="button" onClick={() => navigate('/learnerlogin')} className="text-primary font-semibold hover:underline ml-1">Sign In</button>
 </p>
 </div>
 </div>

@@ -1,5 +1,10 @@
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
 
 export default function LearnerProfileEdupath() {
+  const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -149,12 +154,12 @@ export default function LearnerProfileEdupath() {
 </div>
 <div className="flex-1 min-w-0">
 <div className="flex items-center gap-space-xs flex-wrap">
-<span className="font-headline-md text-headline-md text-on-surface font-bold">Tejas Patil</span>
+<span className="font-headline-md text-headline-md text-on-surface font-bold">{user?.name || 'Learner Profile'}</span>
 <span className="px-2 py-0.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm">Pro Learner</span>
 </div>
 <p className="font-body-sm text-body-sm text-secondary mt-0.5">Focusing on high-concurrency Node.js architectures &amp; reactive frontends.</p>
 <div className="flex items-center gap-space-md mt-space-xs text-secondary font-label-sm text-label-sm flex-wrap">
-<span className="inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">mail</span> tejas@example.com</span>
+<span className="inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">mail</span> {user?.email || 'learner@example.com'}</span>
 <span className="inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">location_on</span> San Francisco, CA</span>
 </div>
 </div>

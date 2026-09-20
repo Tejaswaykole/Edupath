@@ -18,6 +18,8 @@ export const useSubmitPractice = (taskId: number) => {
     mutationFn: (submission: string) => api.submitPractice(taskId, submission),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['learningPath'] });
+      queryClient.invalidateQueries({ queryKey: ['agentActivity'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
     }
   });
 };
@@ -35,6 +37,8 @@ export const useSubmitAssessment = (attemptId: number) => {
       api.submitAssessment(attemptId, answers),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['learningPath'] });
+      queryClient.invalidateQueries({ queryKey: ['agentActivity'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
     }
   });
 };

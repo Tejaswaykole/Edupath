@@ -1,9 +1,11 @@
 import { useLearningPath } from '../../hooks/useLearning';
 import { useAgentActivity } from '../../hooks/useAgent';
+import { useAuthStore } from '../../store/authStore';
 
 export default function LearnerDashboardEdupathProduction() {
   const { data: learningPath, isLoading: isLearningPathLoading } = useLearningPath();
   const { data: agentActivity, isLoading: isAgentActivityLoading } = useAgentActivity();
+  const user = useAuthStore((state) => state.user);
 
   return (
     <div className="min-h-screen bg-surface">
@@ -15,7 +17,7 @@ export default function LearnerDashboardEdupathProduction() {
 <div className="relative z-10 w-full p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
 <div className="max-w-2xl">
 <div className="flex items-center gap-3 mb-2">
-<span className="font-headline-xl text-headline-xl text-on-surface">Good morning, Tejas</span>
+<span className="font-headline-xl text-headline-xl text-on-surface">Good morning, {user?.name?.split(' ')[0] || 'Learner'}</span>
 <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-surface-container-lowest shadow-sm text-primary font-label-sm text-label-sm">
 <span className="material-symbols-outlined text-[15px]">workspace_premium</span>
             Level 3
@@ -304,22 +306,41 @@ export default function LearnerDashboardEdupathProduction() {
   <div className="flex justify-center p-4"><span className="material-symbols-outlined animate-spin text-[24px] text-primary">progress_activity</span></div>
 ) : agentActivity && agentActivity.length > 0 ? (
   <>
-<p className="font-body-sm text-body-sm text-on-surface-variant mb-4 bg-surface-container-low p-3 rounded-xl leading-relaxed">
-  {agentActivity[0].action_taken}
-</p>
+<div className="mb-4 bg-surface-container-low p-3.5 rounded-xl flex flex-col gap-2 border border-surface-container">
+  <div className="flex items-center justify-between">
+    <span className="font-bold text-xs uppercase text-primary tracking-wide">
+      {agentActivity[0].event_type?.replace('_', ' ')}
+    </span>
+    <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary-container text-white font-semibold">
+      {agentActivity[0].event_data?.action || 'ADAPTED'}
+    </span>
+  </div>
+  <p className="font-body-sm text-body-sm text-on-surface leading-relaxed">
+    {agentActivity[0].description || 'Your learning path was dynamically calibrated for your recent performance.'}
+  </p>
+  {agentActivity[0].event_data?.weak_topics && agentActivity[0].event_data.weak_topics.length > 0 && (
+    <div className="flex flex-wrap gap-1 mt-0.5">
+      {agentActivity[0].event_data.weak_topics.slice(0, 2).map((wt: string, i: number) => (
+        <span key={i} className="px-2 py-0.5 rounded bg-surface-container-high text-[11px] text-secondary font-medium">
+          Reinforcing: {wt}
+        </span>
+      ))}
+    </div>
+  )}
+</div>
 <div className="flex flex-col gap-2 mb-4">
-<a className="flex items-center gap-2.5 p-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors group" href="#">
-<span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[18px]">menu_book</span>
-<span className="font-label-md text-label-md text-on-surface">Review agent history</span>
+<a className="flex items-center gap-2.5 p-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors group" href="/agentactivitycenteraicompanion">
+<span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[18px]">neurology</span>
+<span className="font-label-md text-label-md text-on-surface font-medium">Review Agent Decision Center</span>
 </a>
 </div>
 </>
 ) : (
   <p className="font-body-sm text-body-sm text-on-surface-variant mb-4 bg-surface-container-low p-3 rounded-xl leading-relaxed">
-  Agent is monitoring your progress. Keep up the good work!
+  Agent is actively monitoring your learning trajectory. Keep building momentum!
   </p>
 )}
-<a className="inline-flex items-center justify-center gap-1.5 w-full py-2 font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors" href="#">
+<a className="inline-flex items-center justify-center gap-1.5 w-full py-2 font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors" href="/mylearningworkspacetodaystasks">
 <span>View Updated Plan</span>
 <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
 </a>

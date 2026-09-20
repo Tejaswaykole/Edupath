@@ -7,9 +7,9 @@ export default function RoleSelectionEdupath() {
 
   const handleContinue = () => {
     if (role === 'mentor') {
-      navigate('/mentorregistrationedupath');
+      navigate('/mentorregistration');
     } else {
-      navigate('/learnerregistrationedupath');
+      navigate('/learnerregistration');
     }
   };
   return (
@@ -194,7 +194,7 @@ export default function RoleSelectionEdupath() {
       </p>
 <div className="pt-2 flex items-center gap-1.5 font-body-sm text-body-sm">
 <span className="text-secondary">Already have an account?</span>
-<button onClick={() => navigate('/learnerloginedupath')} className="text-primary-container font-semibold hover:underline decoration-primary-container underline-offset-4 focus:outline-none focus:ring-1 focus:ring-primary-container rounded-sm px-1">
+<button onClick={() => navigate('/learnerlogin')} className="text-primary-container font-semibold hover:underline decoration-primary-container underline-offset-4 focus:outline-none focus:ring-1 focus:ring-primary-container rounded-sm px-1">
           Sign In
         </button>
 </div>
