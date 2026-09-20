@@ -74,7 +74,7 @@ def test_get_own_profile_authorized(client: TestClient):
     token = login_resp.json()["access_token"]
     
     response = client.get(
-        "/api/v1/learner/profile",
+        "/api/v1/learners/profile",
         headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
@@ -93,7 +93,7 @@ def test_mentor_cannot_access_learner_profile(client: TestClient):
     token = login_resp.json()["access_token"]
     
     response = client.get(
-        "/api/v1/learner/profile",
+        "/api/v1/learners/profile",
         headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 403

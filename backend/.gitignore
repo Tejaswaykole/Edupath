@@ -4,3 +4,7 @@ __pycache__/
 test.db
 venv/
 .env
+.env.example
+
+__pycache__/
+.env.example    

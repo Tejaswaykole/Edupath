@@ -1,5 +1,15 @@
+import React, { useState } from 'react';
+import { useIssues } from '../../hooks/useIssues';
 
 export default function HelpCenterGlobalSearchIssueReportingEdupath() {
+  const { submitIssue, isSubmitting, isSuccess } = useIssues();
+  const [formData, setFormData] = useState({ category: 'adaptive', title: '', description: '' });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitIssue(formData);
+  };
+
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -298,21 +308,23 @@ export default function HelpCenterGlobalSearchIssueReportingEdupath() {
 <span className="font-label-sm text-label-sm text-secondary">Auto-Telemetry ON</span>
 </div>
 {/*  Success Toast indicator (Toggled upon submission or preview)  */}
+{isSuccess && (
 <div className="mb-4 p-3 rounded-lg bg-tertiary-container text-on-tertiary flex items-start gap-2.5 shadow-sm" id="submission-toast">
 <span className="material-symbols-outlined text-[18px] flex-shrink-0 mt-0.5">check_circle</span>
 <div className="flex flex-col">
-<span className="font-label-md text-label-md font-semibold">Diagnostic report #TKT-8492 received</span>
+<span className="font-label-md text-label-md font-semibold">Diagnostic report received</span>
 <span className="font-body-sm text-body-sm opacity-90">Telemetry capture validated. Response estimated within 4 hours.</span>
 </div>
 </div>
-<form className="flex flex-col gap-4" >
+)}
+<form className="flex flex-col gap-4" onSubmit={handleSubmit}>
 {/*  Issue Category Selector  */}
 <div className="flex flex-col gap-1.5">
 <label className="font-label-md text-label-md text-on-surface">Issue Category</label>
 <div className="relative">
-<select className="w-full bg-surface-container-low rounded-lg px-3 py-2.5 font-body-sm text-body-sm text-on-surface focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary focus:outline-none appearance-none cursor-pointer">
+<select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-surface-container-low rounded-lg px-3 py-2.5 font-body-sm text-body-sm text-on-surface focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary focus:outline-none appearance-none cursor-pointer">
 <option value="adaptive">Adaptive Plan &amp; Curriculum Calibration</option>
-<option defaultValue="" value="sandbox">IDE Sandbox / Cloud Runtime</option>
+<option value="sandbox">IDE Sandbox / Cloud Runtime</option>
 <option value="assessment">Assessment Scoring &amp; Unit Tests</option>
 <option value="mentor">Mentor Connection &amp; Video Bridge</option>
 <option value="bug">User Interface / General Bug</option>
@@ -323,7 +335,7 @@ export default function HelpCenterGlobalSearchIssueReportingEdupath() {
 {/*  Summary / Subject Input  */}
 <div className="flex flex-col gap-1.5">
 <label className="font-label-md text-label-md text-on-surface">Summary / Subject</label>
-<input className="w-full bg-surface-container-low rounded-lg px-3 py-2.5 font-body-sm text-body-sm text-on-surface focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary focus:outline-none" placeholder="e.g., Redis mock test suite timeout on Lab #ND-504" type="text" value="Redis mock test suite timeout on Lab #ND-504"/>
+<input value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required className="w-full bg-surface-container-low rounded-lg px-3 py-2.5 font-body-sm text-body-sm text-on-surface focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary focus:outline-none" placeholder="e.g., Redis mock test suite timeout on Lab #ND-504" type="text"/>
 </div>
 {/*  Auto-attached Context Snapshot Pill  */}
 <div className="p-3 rounded-lg bg-surface-container-low flex flex-col gap-1">
@@ -343,7 +355,7 @@ export default function HelpCenterGlobalSearchIssueReportingEdupath() {
 {/*  Description Textarea  */}
 <div className="flex flex-col gap-1.5">
 <label className="font-label-md text-label-md text-on-surface">Description &amp; Observed Behavior</label>
-<textarea className="w-full bg-surface-container-low rounded-lg p-3 font-body-sm text-body-sm text-on-surface focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary focus:outline-none resize-none" placeholder="Describe what occurred, any error codes produced in the sandbox terminal, or steps to reproduce..." rows={3}>The unit tests for Express route middleware timed out after 3000ms while evaluating token revocation in the integrated Redis mock container. Local container logs show connection refused on port 6379.</textarea>
+<textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} required className="w-full bg-surface-container-low rounded-lg p-3 font-body-sm text-body-sm text-on-surface focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary focus:outline-none resize-none" placeholder="Describe what occurred, any error codes produced in the sandbox terminal, or steps to reproduce..." rows={3}></textarea>
 </div>
 {/*  Attachments Drag & Drop Area  */}
 <div className="flex flex-col gap-1.5">
@@ -361,8 +373,8 @@ export default function HelpCenterGlobalSearchIssueReportingEdupath() {
 </div>
 </div>
 {/*  Submit Button  */}
-<button className="mt-2 w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-headline-sm text-headline-sm font-semibold transition-all shadow-sm flex items-center justify-center gap-2 group" type="submit">
-<span>Submit Diagnostic Report</span>
+<button disabled={isSubmitting} className="mt-2 w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-headline-sm text-headline-sm font-semibold transition-all shadow-sm flex items-center justify-center gap-2 group disabled:opacity-50" type="submit">
+<span>{isSubmitting ? 'Submitting...' : 'Submit Diagnostic Report'}</span>
 <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">send</span>
 </button>
 </form>

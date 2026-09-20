@@ -1,5 +1,9 @@
+import React from 'react';
+import { useReports } from '../../hooks/useReports';
 
 export default function ProgressIntelligenceLearningConsistencyEdupath() {
+  const { report, isLoading } = useReports();
+
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -57,6 +61,9 @@ export default function ProgressIntelligenceLearningConsistencyEdupath() {
 <div className="absolute right-64 -bottom-20 w-64 h-64 rounded-full bg-surface-container-high/40 blur-2xl pointer-events-none"></div>
 </div>
 {/*  Top Metric Row (5 Core KPI Tiles)  */}
+{isLoading ? (
+  <div className="flex justify-center p-8"><span className="material-symbols-outlined animate-spin text-[32px] text-primary">progress_activity</span></div>
+) : report && (
 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
 {/*  Tile 1: Overall Readiness  */}
 <div className="bg-surface-container-lowest p-5 rounded-2xl shadow-sm flex flex-col justify-between gap-3 group hover:shadow-md transition-shadow">
@@ -68,11 +75,11 @@ export default function ProgressIntelligenceLearningConsistencyEdupath() {
 </div>
 <div>
 <div className="flex items-baseline gap-2">
-<span className="font-headline-xl text-headline-xl text-on-surface">68%</span>
+<span className="font-headline-xl text-headline-xl text-on-surface">{report.progress.completion_percentage}%</span>
 <span className="font-label-sm text-label-sm text-tertiary-container font-bold">+6% sprint</span>
 </div>
 <div className="w-full bg-surface-container-low h-1.5 rounded-full mt-2.5 overflow-hidden">
-<div className="bg-primary-container h-full rounded-full" ></div>
+<div className="bg-primary-container h-full rounded-full" style={{ width: `${report.progress.completion_percentage}%` }}></div>
 </div>
 </div>
 </div>
@@ -86,7 +93,7 @@ export default function ProgressIntelligenceLearningConsistencyEdupath() {
 </div>
 <div>
 <div className="flex items-baseline gap-2">
-<span className="font-headline-xl text-headline-xl text-on-surface">9 <span className="font-headline-md text-headline-md text-secondary">/ 15</span></span>
+<span className="font-headline-xl text-headline-xl text-on-surface">{report.acquired_skills.length} <span className="font-headline-md text-headline-md text-secondary">/ {report.acquired_skills.length + report.remaining_gaps.length + report.in_progress_skills.length}</span></span>
 <span className="font-label-sm text-label-sm text-secondary">tracked</span>
 </div>
 <p className="font-body-sm text-body-sm text-secondary mt-1">60% target achieved</p>
@@ -102,10 +109,10 @@ export default function ProgressIntelligenceLearningConsistencyEdupath() {
 </div>
 <div>
 <div className="flex items-baseline gap-2">
-<span className="font-headline-xl text-headline-xl text-on-surface">3</span>
+<span className="font-headline-xl text-headline-xl text-on-surface">{report.in_progress_skills.length}</span>
 <span className="font-label-sm text-label-sm text-secondary">Active Units</span>
 </div>
-<p className="font-body-sm text-body-sm text-secondary mt-1 truncate">Node REST, PostgreSQL, JWT</p>
+<p className="font-body-sm text-body-sm text-secondary mt-1 truncate">{report.in_progress_skills.map(s => s.name).join(', ') || 'None'}</p>
 </div>
 </div>
 {/*  Tile 4: Remaining Gaps  */}
@@ -118,7 +125,7 @@ export default function ProgressIntelligenceLearningConsistencyEdupath() {
 </div>
 <div>
 <div className="flex items-baseline gap-2">
-<span className="font-headline-xl text-headline-xl text-on-surface">3</span>
+<span className="font-headline-xl text-headline-xl text-on-surface">{report.remaining_gaps.length}</span>
 <span className="font-label-sm text-label-sm text-error font-semibold">Deficits</span>
 </div>
 <p className="font-body-sm text-body-sm text-secondary mt-1">Reinforcement scheduled</p>
@@ -127,20 +134,21 @@ export default function ProgressIntelligenceLearningConsistencyEdupath() {
 {/*  Tile 5: Learning Consistency  */}
 <div className="bg-surface-container-lowest p-5 rounded-2xl shadow-sm flex flex-col justify-between gap-3 group hover:shadow-md transition-shadow">
 <div className="flex items-center justify-between">
-<span className="font-label-md text-label-md text-secondary">Consistency</span>
+<span className="font-label-md text-label-md text-secondary">Assessment Avg</span>
 <div className="w-8 h-8 rounded-lg bg-tertiary-fixed flex items-center justify-center text-tertiary">
 <span className="material-symbols-outlined text-[18px]">local_fire_department</span>
 </div>
 </div>
 <div>
 <div className="flex items-baseline gap-2">
-<span className="font-headline-xl text-headline-xl text-on-surface">92%</span>
-<span className="font-label-sm text-label-sm text-tertiary-container font-bold">5w streak</span>
+<span className="font-headline-xl text-headline-xl text-on-surface">{report.progress.average_assessment_score}%</span>
+<span className="font-label-sm text-label-sm text-tertiary-container font-bold">score</span>
 </div>
 <p className="font-body-sm text-body-sm text-secondary mt-1">Steady pacing rhythm</p>
 </div>
 </div>
 </div>
+)}
 {/*  Main Workspace Grid: Left Column (2/3) & Right Column (1/3)  */}
 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 {/*  Left Column: Primary Analytics & Objectives (8 cols)  */}

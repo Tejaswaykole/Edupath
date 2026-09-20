@@ -1,5 +1,8 @@
+import { useSettings } from '../../hooks/useSettings';
 
 export default function SettingsLearningPreferencesPrivacyEdupath() {
+  const { isUpdating } = useSettings();
+
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -411,7 +414,7 @@ export default function SettingsLearningPreferencesPrivacyEdupath() {
 <span className="material-symbols-outlined text-[18px]">check_circle</span>
 </div>
 <span className="font-body-sm text-body-sm text-on-surface">
-<strong className="font-semibold text-tertiary">✓ Preferences saved</strong> and synchronized with Week 04 adaptive plan.
+{isUpdating ? "Saving..." : <><strong className="font-semibold text-tertiary">✓ Preferences synced</strong> and applied.</>}
         </span>
 </div>
 <div className="flex items-center gap-3 w-full sm:w-auto justify-end">

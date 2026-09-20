@@ -13,6 +13,8 @@ from .mentorship import MentorProfile, MentorExpertise, MentorshipRequest, Activ
 from .agent import AgentEvent, PlanAdaptation
 from .assistant import AssistantConversation, AssistantMessage
 from .notification import Notification
+from .settings import UserSettings
+from .issue import IssueReport
 
 __all__ = [
     "Base", 
@@ -27,5 +29,7 @@ __all__ = [
     "MentorProfile", "MentorExpertise", "MentorshipRequest", "ActiveMentorship", "MentorGuidance",
     "AgentEvent", "PlanAdaptation",
     "AssistantConversation", "AssistantMessage",
-    "Notification"
+    "Notification",
+    "UserSettings",
+    "IssueReport"
 ]

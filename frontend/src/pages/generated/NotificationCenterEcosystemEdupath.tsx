@@ -1,5 +1,8 @@
+import React from 'react';
+import { useNotifications } from '../../hooks/useNotifications';
 
 export default function NotificationCenterEcosystemEdupath() {
+  const { notifications, unreadCount, markAllAsRead, markAsRead, isLoading } = useNotifications();
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -19,7 +22,7 @@ export default function NotificationCenterEcosystemEdupath() {
 <h1 className="font-headline-xl text-headline-xl text-on-surface tracking-tight">Notification Center</h1>
 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold">
 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-          2 Unread
+          {unreadCount} Unread
         </span>
 </div>
 <p className="font-body-md text-body-md text-on-surface-variant max-w-3xl">
@@ -28,7 +31,7 @@ export default function NotificationCenterEcosystemEdupath() {
 </div>
 {/*  Header Quick Actions  */}
 <div className="flex items-center gap-3 self-start md:self-center flex-shrink-0">
-<button className="group flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-lowest text-on-surface-variant hover:text-on-surface shadow-sm hover:shadow transition-all" type="button">
+<button onClick={() => markAllAsRead()} className="group flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-container-lowest text-on-surface-variant hover:text-on-surface shadow-sm hover:shadow transition-all" type="button">
 <span className="material-symbols-outlined text-[18px] text-secondary group-hover:text-primary transition-colors">done_all</span>
 <span className="font-label-md text-label-md">Mark All as Read</span>
 </button>
@@ -82,215 +85,44 @@ export default function NotificationCenterEcosystemEdupath() {
 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 {/*  Primary Feed Stream (70% column / col-span-8)  */}
 <div className="lg:col-span-8 flex flex-col gap-6">
-{/*  Today Group  */}
-<div className="flex flex-col gap-3">
-<div className="flex items-center justify-between px-1">
-<div className="flex items-center gap-2">
-<span className="font-headline-sm text-headline-sm text-on-surface">Today</span>
-<span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-<span className="font-label-sm text-label-sm text-secondary">2 priority alerts</span>
-</div>
-<span className="font-label-sm text-label-sm text-outline">Sync interval: Realtime</span>
-</div>
-{/*  Notification 1: Adaptive Plan Calibrated (Unread)  */}
-<div className="relative bg-surface-container-lowest rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row gap-4">
-{/*  Unread Accent Indicator  */}
-<div className="absolute left-0 top-6 bottom-6 w-1 rounded-r-full bg-primary"></div>
-{/*  Category Icon Box  */}
-<div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
-<span className="material-symbols-outlined text-[24px]">auto_awesome</span>
-</div>
-{/*  Content Body  */}
-<div className="flex-1 flex flex-col gap-2 min-w-0">
-<div className="flex flex-wrap items-baseline justify-between gap-2">
-<div className="flex items-center gap-2">
-<span className="font-label-md text-label-md text-on-surface font-bold">Adaptive Plan Calibrated — Node.js Authentication</span>
-<span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold">New Path</span>
-</div>
-<span className="font-label-sm text-label-sm text-secondary flex items-center gap-1">
-<span className="material-symbols-outlined text-[14px]">schedule</span>
-                18 min ago
-              </span>
-</div>
-<p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-              EduPath added a 45-min foundational drill on stateless JWT revocation and rescheduled your Capstone to Saturday based on Checkpoint 04 diagnostic.
-            </p>
-{/*  Inline Micro-Insight Card  */}
-<div className="bg-surface-container-low rounded-xl p-3 flex items-center justify-between gap-3 text-on-surface-variant">
-<div className="flex items-center gap-2.5 min-w-0">
-<span className="material-symbols-outlined text-primary text-[20px] flex-shrink-0">tune</span>
-<div className="flex flex-col min-w-0">
-<span className="font-label-sm text-label-sm text-on-surface font-semibold truncate">Target: Stateless JWT Revocation &amp; In-Memory Denylists</span>
-<span className="font-body-sm text-body-sm text-secondary truncate">Estimated effort: +45m • Capstone Milestone date shifted +48h</span>
-</div>
-</div>
-<span className="px-2 py-1 rounded bg-surface-container font-label-sm text-label-sm text-primary font-semibold flex-shrink-0">Impact: High</span>
-</div>
-{/*  Action Strip  */}
-<div className="flex items-center gap-3 pt-2">
-<button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm hover:bg-primary-container transition-all" type="button">
-<span>View Updated Plan</span>
-<span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-</button>
-<button className="px-3.5 py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" type="button">
-                Dismiss
+{isLoading ? (
+  <div className="flex justify-center p-8"><span className="material-symbols-outlined animate-spin text-[32px] text-primary">progress_activity</span></div>
+) : notifications?.length === 0 ? (
+  <div className="text-center p-8 text-on-surface-variant">No notifications.</div>
+) : (
+  <div className="flex flex-col gap-3">
+    {notifications?.map(n => (
+      <div key={n.id} className="relative bg-surface-container-lowest rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row gap-4">
+        {!n.is_read && <div className="absolute left-0 top-6 bottom-6 w-1 rounded-r-full bg-primary"></div>}
+        <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+          <span className="material-symbols-outlined text-[24px]">notifications</span>
+        </div>
+        <div className="flex-1 flex flex-col gap-2 min-w-0">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="font-label-md text-label-md text-on-surface font-bold">{n.title}</span>
+              <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold">{n.notification_type}</span>
+            </div>
+            <span className="font-label-sm text-label-sm text-secondary flex items-center gap-1">
+              <span className="material-symbols-outlined text-[14px]">schedule</span>
+              {new Date(n.created_at).toLocaleDateString()}
+            </span>
+          </div>
+          <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            {n.message}
+          </p>
+          {!n.is_read && (
+            <div className="flex items-center gap-3 pt-2">
+              <button onClick={() => markAsRead(n.id)} className="px-3.5 py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" type="button">
+                Mark as read
               </button>
-</div>
-</div>
-</div>
-{/*  Notification 2: Mentorship Accepted (Unread)  */}
-<div className="relative bg-surface-container-lowest rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row gap-4">
-{/*  Unread Accent Indicator  */}
-<div className="absolute left-0 top-6 bottom-6 w-1 rounded-r-full bg-primary"></div>
-{/*  Mentor Avatar / Icon Box  */}
-<div className="relative w-11 h-11 flex-shrink-0">
-<img className="w-11 h-11 rounded-xl object-cover" data-alt="Close up professional portrait photo of a senior male software architect in his early 30s with friendly expression, dark glasses, soft studio lighting with subtle cool blue tones in background, sharp focus, modern executive editorial look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA49YWMgggJ_kQc4wClmrkqDzghEGt0jRaK5f7OIgHNpo1zct7F-cggCbChhXbFgue_wMMSTT6ZgNkzayaqnF0Ps7NwfrNcgnFtfjiKe1bNS4U17mf4OnlyCgja-3P-LAoqhFHfZOLyAtpXz0BKyoI7cL8R0ZiCAGKbKuI_HVPtCWP_02aIHTDjacjyDwGwlIWHmBkTLZ6Zh4DHeRJESfrhcUtpot8Bo3OjJAuyNMA8"/>
-<div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center ring-2 ring-surface-container-lowest">
-<span className="material-symbols-outlined text-[12px]">check</span>
-</div>
-</div>
-{/*  Content Body  */}
-<div className="flex-1 flex flex-col gap-2 min-w-0">
-<div className="flex flex-wrap items-baseline justify-between gap-2">
-<div className="flex items-center gap-2">
-<span className="font-label-md text-label-md text-on-surface font-bold">Mentorship Request Accepted by Rahul Sharma</span>
-<span className="px-2 py-0.5 rounded-full bg-tertiary-container/20 text-tertiary font-label-sm text-label-sm font-semibold">Confirmed</span>
-</div>
-<span className="font-label-sm text-label-sm text-secondary flex items-center gap-1">
-<span className="material-symbols-outlined text-[14px]">schedule</span>
-                2 hours ago
-              </span>
-</div>
-<p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-              Staff Backend Engineer @ Stripe accepted your request on <span className="text-on-surface font-medium">“Token Invalidation &amp; Redis Blacklisting”</span>. Milestone session scheduled for Friday 5:30 PM PST.
-            </p>
-{/*  Calendar Event Preview Box  */}
-<div className="bg-surface-container-low rounded-xl p-3 flex items-center justify-between gap-3 text-on-surface-variant">
-<div className="flex items-center gap-3">
-<div className="w-10 h-10 rounded-lg bg-surface-container-lowest flex flex-col items-center justify-center font-bold text-primary flex-shrink-0">
-<span className="text-[9px] uppercase tracking-wider text-secondary">FRI</span>
-<span className="text-[14px] leading-tight">28</span>
-</div>
-<div className="flex flex-col">
-<span className="font-label-md text-label-md text-on-surface font-semibold">1:1 Milestone Deep-Dive: Token Security</span>
-<span className="font-body-sm text-body-sm text-secondary">5:30 PM – 6:15 PM PST • Google Meet (Syncing to Google Calendar)</span>
-</div>
-</div>
-<span className="px-2 py-1 rounded bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm flex items-center gap-1">
-<span className="material-symbols-outlined text-[14px]">videocam</span>
-                Direct Join Ready
-              </span>
-</div>
-{/*  Action Strip  */}
-<div className="flex items-center gap-3 pt-2">
-<button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm hover:bg-primary-container transition-all" type="button">
-<span>Open Mentorship Workspace</span>
-<span className="material-symbols-outlined text-[16px]">open_in_new</span>
-</button>
-<button className="px-3.5 py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" type="button">
-                Reschedule
-              </button>
-</div>
-</div>
-</div>
-</div>
-{/*  Earlier This Week Group  */}
-<div className="flex flex-col gap-3 pt-2">
-<div className="flex items-center justify-between px-1">
-<div className="flex items-center gap-2">
-<span className="font-headline-sm text-headline-sm text-on-surface">Earlier this week</span>
-<span className="font-label-sm text-label-sm text-secondary">3 archived alerts</span>
-</div>
-<button className="font-label-sm text-label-sm text-primary hover:underline" type="button">Collapse read</button>
-</div>
-{/*  Notification 3: Read Assessment  */}
-<div className="bg-surface-container-lowest rounded-2xl p-5 shadow-sm hover:shadow transition-all flex flex-col sm:flex-row gap-4 opacity-95">
-{/*  Icon  */}
-<div className="w-11 h-11 rounded-xl bg-tertiary-container/15 flex items-center justify-center flex-shrink-0 text-tertiary">
-<span className="material-symbols-outlined text-[24px]">assignment_turned_in</span>
-</div>
-{/*  Content Body  */}
-<div className="flex-1 flex flex-col gap-2 min-w-0">
-<div className="flex flex-wrap items-baseline justify-between gap-2">
-<div className="flex items-center gap-2">
-<span className="font-label-md text-label-md text-on-surface font-semibold">Knowledge Check 04 Results Available</span>
-<span className="px-2 py-0.5 rounded-full bg-surface-container text-secondary font-label-sm text-label-sm">Passed (80%)</span>
-</div>
-<span className="font-label-sm text-label-sm text-outline flex items-center gap-1">
-<span className="material-symbols-outlined text-[14px]">history</span>
-                Yesterday at 4:15 PM
-              </span>
-</div>
-<p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-              You scored 80% on API Architecture &amp; Authentication. Prerequisite Milestone 02 unlocked with targeted feedback on CSRF headers.
-            </p>
-<div className="flex items-center gap-3 pt-1">
-<button className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" type="button">
-<span>Review Diagnostic</span>
-<span className="material-symbols-outlined text-[16px]">chevron_right</span>
-</button>
-</div>
-</div>
-</div>
-{/*  Notification 4: Read Learning Daily Sprint  */}
-<div className="bg-surface-container-lowest rounded-2xl p-5 shadow-sm hover:shadow transition-all flex flex-col sm:flex-row gap-4 opacity-95">
-{/*  Icon  */}
-<div className="w-11 h-11 rounded-xl bg-surface-container flex items-center justify-center flex-shrink-0 text-primary">
-<span className="material-symbols-outlined text-[24px]">menu_book</span>
-</div>
-{/*  Content Body  */}
-<div className="flex-1 flex flex-col gap-2 min-w-0">
-<div className="flex flex-wrap items-baseline justify-between gap-2">
-<div className="flex items-center gap-2">
-<span className="font-label-md text-label-md text-on-surface font-semibold">Daily Sprint Ready — 4 Scheduled Modules</span>
-<span className="px-2 py-0.5 rounded-full bg-surface-container text-secondary font-label-sm text-label-sm">Daily Track</span>
-</div>
-<span className="font-label-sm text-label-sm text-outline flex items-center gap-1">
-<span className="material-symbols-outlined text-[14px]">history</span>
-                2 days ago
-              </span>
-</div>
-<p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-              Day 03 tasks for Node.js Express 5.x routing and controller middleware are queued in your workspace.
-            </p>
-<div className="flex items-center gap-3 pt-1">
-<button className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" type="button">
-<span>Start Daily Sprint</span>
-<span className="material-symbols-outlined text-[16px]">play_circle</span>
-</button>
-</div>
-</div>
-</div>
-{/*  Notification 5: Read System Verification  */}
-<div className="bg-surface-container-lowest rounded-2xl p-5 shadow-sm hover:shadow transition-all flex flex-col sm:flex-row gap-4 opacity-95">
-{/*  Icon  */}
-<div className="w-11 h-11 rounded-xl bg-surface-container-high flex items-center justify-center flex-shrink-0 text-on-secondary-fixed">
-<span className="material-symbols-outlined text-[24px]">verified_user</span>
-</div>
-{/*  Content Body  */}
-<div className="flex-1 flex flex-col gap-2 min-w-0">
-<div className="flex flex-wrap items-baseline justify-between gap-2">
-<div className="flex items-center gap-2">
-<span className="font-label-md text-label-md text-on-surface font-semibold">Document Center Verification Complete</span>
-<span className="px-2 py-0.5 rounded-full bg-surface-container text-secondary font-label-sm text-label-sm">System Verified</span>
-</div>
-<span className="font-label-sm text-label-sm text-outline flex items-center gap-1">
-<span className="material-symbols-outlined text-[14px]">history</span>
-                3 days ago
-              </span>
-</div>
-<p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-              Your uploaded resume (<span className="font-mono text-body-sm text-on-surface">Resume_2025_FullStack.pdf</span>) was verified. 8 skills confirmed and 4 priority gaps synchronized.
-            </p>
-<div className="flex items-center gap-3 pt-1">
-<button className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all font-label-md text-label-md" type="button">
-<span>Inspect Verified Skills</span>
-<span className="material-symbols-outlined text-[16px]">tune</span>
-</button>
-</div>
-</div>
-</div>
-</div>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+)}
 </div>
 {/*  Secondary Right Column (30% column / col-span-4)  */}
 <div className="lg:col-span-4 flex flex-col gap-6">

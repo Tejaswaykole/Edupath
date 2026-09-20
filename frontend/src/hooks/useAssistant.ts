@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { assistantApi, AssistantMessageCreate } from '../api/assistant';
+import { assistantApi } from "../api/assistant"; import type { AssistantMessageCreate } from '../api/assistant';
 
 export const useAssistant = (conversationId?: number) => {
   const queryClient = useQueryClient();

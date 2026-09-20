@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { mentorshipApi, MentorshipRequestCreate, MentorshipRequestUpdate, MentorGuidanceCreate } from '../api/mentorship';
+import { mentorshipApi } from "../api/mentorship"; import type { MentorshipRequestCreate, MentorshipRequestUpdate, MentorGuidanceCreate } from '../api/mentorship';
 
 export const useMentorship = () => {
   const queryClient = useQueryClient();

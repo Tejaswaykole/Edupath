@@ -1,5 +1,10 @@
+import { useLearningPath } from '../../hooks/useLearning';
+import { useAgentActivity } from '../../hooks/useAgent';
 
 export default function LearnerDashboardEdupathProduction() {
+  const { data: learningPath, isLoading: isLearningPathLoading } = useLearningPath();
+  const { data: agentActivity, isLoading: isAgentActivityLoading } = useAgentActivity();
+
   return (
     <div className="min-h-screen bg-surface">
       {/* Generated from Stitch UI */}
@@ -48,9 +53,9 @@ export default function LearnerDashboardEdupathProduction() {
 <div className="w-11 h-11 rounded-xl bg-secondary-container text-primary flex items-center justify-center">
 <span className="material-symbols-outlined text-[22px]">menu_book</span>
 </div>
-<div className="flex flex-col">
-<span className="font-headline-md text-headline-md text-on-surface leading-tight">8 / 15</span>
-<span className="font-label-sm text-label-sm text-secondary">Skills Acquired</span>
+<div className="flex flex-col min-w-0 overflow-hidden">
+<span className="font-headline-md text-headline-md text-on-surface leading-tight truncate">8 / 15</span>
+<span className="font-label-sm text-label-sm text-secondary truncate">Skills Acquired</span>
 </div>
 </div>
 <span className="material-symbols-outlined text-secondary group-hover:translate-x-0.5 group-hover:text-primary transition-all text-[18px]">chevron_right</span>
@@ -87,9 +92,9 @@ export default function LearnerDashboardEdupathProduction() {
 <div className="w-11 h-11 rounded-xl bg-error-container/40 text-on-error-container flex items-center justify-center">
 <span className="material-symbols-outlined text-[22px]" >local_fire_department</span>
 </div>
-<div className="flex flex-col">
-<span className="font-headline-md text-headline-md text-on-surface leading-tight">5</span>
-<span className="font-label-sm text-label-sm text-secondary">Week Streak</span>
+<div className="flex flex-col min-w-0 overflow-hidden">
+<span className="font-headline-md text-headline-md text-on-surface leading-tight truncate">5</span>
+<span className="font-label-sm text-label-sm text-secondary truncate">Week Streak</span>
 </div>
 </div>
 <span className="material-symbols-outlined text-secondary group-hover:translate-x-0.5 group-hover:text-primary transition-all text-[18px]">chevron_right</span>
@@ -126,63 +131,32 @@ export default function LearnerDashboardEdupathProduction() {
 </div>
 {/*  Task List  */}
 <div className="flex flex-col gap-3 mb-6">
-{/*  Item 1: Completed  */}
-<div className="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-low/60 hover:bg-surface-container-low transition-colors">
+{isLearningPathLoading ? (
+  <div className="flex justify-center p-4"><span className="material-symbols-outlined animate-spin text-[24px] text-primary">progress_activity</span></div>
+) : learningPath?.modules ? (
+  learningPath.modules.slice(0, 3).map((mod: any, idx: number) => (
+<div key={idx} className="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow transition-shadow">
 <div className="flex items-center gap-3.5">
-<span className="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center font-label-sm text-label-sm font-semibold text-secondary">1</span>
-<div className="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center">
-<span className="material-symbols-outlined text-[18px]">play_circle</span>
-</div>
-<div className="flex flex-col">
-<span className="font-label-md text-label-md text-on-surface font-semibold">Watch: REST API Fundamentals</span>
-<span className="font-body-sm text-body-sm text-secondary">Architecture, HTTP Verbs, Status Codes</span>
-</div>
-</div>
-<div className="flex items-center gap-4">
-<span className="font-label-sm text-label-sm text-secondary">15 min</span>
-<div className="w-6 h-6 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center">
-<span className="material-symbols-outlined text-[16px]">check</span>
-</div>
-</div>
-</div>
-{/*  Item 2: In Progress  */}
-<div className="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow transition-shadow">
-<div className="flex items-center gap-3.5">
-<span className="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center font-label-sm text-label-sm font-semibold text-secondary">2</span>
+<span className="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center font-label-sm text-label-sm font-semibold text-secondary">{idx + 1}</span>
 <div className="w-8 h-8 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center">
-<span className="material-symbols-outlined text-[18px]">code</span>
+<span className="material-symbols-outlined text-[18px]">menu_book</span>
 </div>
 <div className="flex flex-col">
-<span className="font-label-md text-label-md text-on-surface font-semibold">Complete 2 practice tasks</span>
-<span className="font-body-sm text-body-sm text-secondary">Implement Express endpoints with middleware</span>
+<span className="font-label-md text-label-md text-on-surface font-semibold">{mod.title}</span>
+<span className="font-body-sm text-body-sm text-secondary">{mod.description.substring(0, 50)}...</span>
 </div>
 </div>
 <div className="flex items-center gap-4">
-<span className="font-label-sm text-label-sm text-secondary">30 min</span>
+<span className="font-label-sm text-label-sm text-secondary">{mod.estimated_minutes} min</span>
 <div className="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center text-primary-container">
 <span className="material-symbols-outlined text-[16px]">hourglass_top</span>
 </div>
 </div>
 </div>
-{/*  Item 3: Pending  */}
-<div className="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-low/40 hover:bg-surface-container-low transition-colors">
-<div className="flex items-center gap-3.5">
-<span className="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center font-label-sm text-label-sm font-semibold text-secondary">3</span>
-<div className="w-8 h-8 rounded-lg bg-surface-container-high text-secondary flex items-center justify-center">
-<span className="material-symbols-outlined text-[18px]">quiz</span>
-</div>
-<div className="flex flex-col">
-<span className="font-label-md text-label-md text-on-surface font-semibold">Take a 10-question assessment</span>
-<span className="font-body-sm text-body-sm text-secondary">Benchmark API design knowledge</span>
-</div>
-</div>
-<div className="flex items-center gap-4">
-<span className="font-label-sm text-label-sm text-secondary">20 min</span>
-<div className="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center text-secondary">
-<span className="material-symbols-outlined text-[14px]">radio_button_unchecked</span>
-</div>
-</div>
-</div>
+  ))
+) : (
+  <p className="font-body-sm text-body-sm text-secondary">No active learning path found.</p>
+)}
 </div>
 {/*  Action Row  */}
 <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -326,23 +300,25 @@ export default function LearnerDashboardEdupathProduction() {
 </button>
 </div>
 </div>
+{isAgentActivityLoading ? (
+  <div className="flex justify-center p-4"><span className="material-symbols-outlined animate-spin text-[24px] text-primary">progress_activity</span></div>
+) : agentActivity && agentActivity.length > 0 ? (
+  <>
 <p className="font-body-sm text-body-sm text-on-surface-variant mb-4 bg-surface-container-low p-3 rounded-xl leading-relaxed">
-          You've been struggling with API authentication. I've added a short JWT exercise before your next topic.
-        </p>
+  {agentActivity[0].action_taken}
+</p>
 <div className="flex flex-col gap-2 mb-4">
 <a className="flex items-center gap-2.5 p-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors group" href="#">
 <span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[18px]">menu_book</span>
-<span className="font-label-md text-label-md text-on-surface">Review authentication basics</span>
-</a>
-<a className="flex items-center gap-2.5 p-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors group" href="#">
-<span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[18px]">code</span>
-<span className="font-label-md text-label-md text-on-surface">Try a hands-on exercise</span>
-</a>
-<a className="flex items-center gap-2.5 p-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors group" href="#">
-<span className="material-symbols-outlined text-secondary group-hover:text-primary transition-colors text-[18px]">lightbulb</span>
-<span className="font-label-md text-label-md text-on-surface">Take a smaller step first</span>
+<span className="font-label-md text-label-md text-on-surface">Review agent history</span>
 </a>
 </div>
+</>
+) : (
+  <p className="font-body-sm text-body-sm text-on-surface-variant mb-4 bg-surface-container-low p-3 rounded-xl leading-relaxed">
+  Agent is monitoring your progress. Keep up the good work!
+  </p>
+)}
 <a className="inline-flex items-center justify-center gap-1.5 w-full py-2 font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant transition-colors" href="#">
 <span>View Updated Plan</span>
 <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
